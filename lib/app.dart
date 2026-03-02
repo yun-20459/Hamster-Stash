@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/theme/app_theme.dart';
+import 'package:hamster_stash/core/theme/app_theme.dart';
 
 final _router = GoRouter(
   initialLocation: '/accounts',
@@ -75,7 +75,7 @@ class HamsterStashApp extends StatelessWidget {
 }
 
 class ScaffoldWithNavBar extends StatelessWidget {
-  const ScaffoldWithNavBar({super.key, required this.navigationShell});
+  const ScaffoldWithNavBar({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -98,10 +98,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
             icon: Icon(Icons.receipt_long),
             label: 'Transactions',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Budget',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Budget'),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
             label: 'Reports',
@@ -131,10 +128,7 @@ class _PlaceholderScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(title, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
-            Text(
-              'Coming soon...',
-              style: theme.textTheme.bodySmall,
-            ),
+            Text('Coming soon...', style: theme.textTheme.bodySmall),
           ],
         ),
       ),
