@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/theme/app_theme.dart';
+import 'package:hamster_stash/core/theme/app_theme.dart';
 
 final _router = GoRouter(
   initialLocation: '/accounts',
@@ -75,7 +75,7 @@ class HamsterStashApp extends StatelessWidget {
 }
 
 class ScaffoldWithNavBar extends StatelessWidget {
-  const ScaffoldWithNavBar({super.key, required this.navigationShell});
+  const ScaffoldWithNavBar({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 

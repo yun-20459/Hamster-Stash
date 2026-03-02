@@ -1,7 +1,6 @@
+import 'package:hamster_stash/core/database/collections/category.dart';
+import 'package:hamster_stash/core/database/enums.dart';
 import 'package:isar/isar.dart';
-
-import 'collections/category.dart';
-import 'enums.dart';
 
 Future<void> seedCategories(Isar isar) async {
   final count = await isar.categorys.count();
