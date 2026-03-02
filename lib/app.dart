@@ -98,10 +98,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
             icon: Icon(Icons.receipt_long),
             label: 'Transactions',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Budget',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Budget'),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
             label: 'Reports',
@@ -131,10 +128,7 @@ class _PlaceholderScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(title, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
-            Text(
-              'Coming soon...',
-              style: theme.textTheme.bodySmall,
-            ),
+            Text('Coming soon...', style: theme.textTheme.bodySmall),
           ],
         ),
       ),

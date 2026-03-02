@@ -5,9 +5,7 @@ import 'package:hamster_stash/app.dart';
 
 void main() {
   testWidgets('App renders with bottom navigation', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: HamsterStashApp()),
-    );
+    await tester.pumpWidget(const ProviderScope(child: HamsterStashApp()));
 
     expect(find.text('Accounts'), findsWidgets);
     expect(find.text('Transactions'), findsOneWidget);

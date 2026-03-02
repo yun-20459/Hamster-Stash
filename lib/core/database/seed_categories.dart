@@ -176,17 +176,27 @@ Future<void> seedCategories(Isar isar) async {
   });
 
   // Now add sub-categories with parent IDs
-  final savedCategories =
-      await isar.categorys.where().sortBySortOrder().findAll();
+  final savedCategories = await isar.categorys
+      .where()
+      .sortBySortOrder()
+      .findAll();
 
-  final foodId =
-      savedCategories.firstWhere((c) => c.name == 'Food' && c.type == CategoryType.expense).id;
-  final transportId =
-      savedCategories.firstWhere((c) => c.name == 'Transport' && c.type == CategoryType.expense).id;
-  final entertainmentId =
-      savedCategories.firstWhere((c) => c.name == 'Entertainment' && c.type == CategoryType.expense).id;
-  final shoppingId =
-      savedCategories.firstWhere((c) => c.name == 'Shopping' && c.type == CategoryType.expense).id;
+  final foodId = savedCategories
+      .firstWhere((c) => c.name == 'Food' && c.type == CategoryType.expense)
+      .id;
+  final transportId = savedCategories
+      .firstWhere(
+        (c) => c.name == 'Transport' && c.type == CategoryType.expense,
+      )
+      .id;
+  final entertainmentId = savedCategories
+      .firstWhere(
+        (c) => c.name == 'Entertainment' && c.type == CategoryType.expense,
+      )
+      .id;
+  final shoppingId = savedCategories
+      .firstWhere((c) => c.name == 'Shopping' && c.type == CategoryType.expense)
+      .id;
 
   final subCategories = <Category>[
     // Food sub-categories
