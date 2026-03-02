@@ -1,6 +1,5 @@
+import 'package:hamster_stash/core/database/enums.dart';
 import 'package:isar/isar.dart';
-
-import '../enums.dart';
 
 part 'receivable_payable.g.dart';
 

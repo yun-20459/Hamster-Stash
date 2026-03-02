@@ -1,23 +1,17 @@
-import 'dart:math';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hamster_stash/core/database/collections/account.dart';
+import 'package:hamster_stash/core/database/collections/budget.dart';
+import 'package:hamster_stash/core/database/collections/category.dart';
+import 'package:hamster_stash/core/database/collections/manual_valuation.dart';
+import 'package:hamster_stash/core/database/collections/receivable_payable.dart';
+import 'package:hamster_stash/core/database/collections/recurring_rule.dart';
+import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'collections/account.dart';
-import 'collections/budget.dart';
-import 'collections/category.dart';
-import 'collections/manual_valuation.dart';
-import 'collections/receivable_payable.dart';
-import 'collections/recurring_rule.dart';
-import 'collections/transaction.dart';
 
 class DatabaseHelper {
   DatabaseHelper._();
 
   static Isar? _isar;
-  static const _encryptionKeyName = 'isar_encryption_key';
-  static const _secureStorage = FlutterSecureStorage();
 
   static Future<Isar> get instance async {
     _isar ??= await _openDatabase();
@@ -26,7 +20,6 @@ class DatabaseHelper {
 
   static Future<Isar> _openDatabase() async {
     final dir = await getApplicationDocumentsDirectory();
-    final encryptionKey = await _getOrCreateEncryptionKey();
 
     return Isar.open(
       [
@@ -40,23 +33,7 @@ class DatabaseHelper {
       ],
       directory: dir.path,
       name: 'hamster_stash',
-      encryptionKey: encryptionKey,
     );
-  }
-
-  static Future<String> _getOrCreateEncryptionKey() async {
-    var key = await _secureStorage.read(key: _encryptionKeyName);
-    if (key == null) {
-      key = _generateEncryptionKey();
-      await _secureStorage.write(key: _encryptionKeyName, value: key);
-    }
-    return key;
-  }
-
-  static String _generateEncryptionKey() {
-    final random = Random.secure();
-    final values = List<int>.generate(32, (_) => random.nextInt(256));
-    return String.fromCharCodes(values);
   }
 
   static Future<void> close() async {

@@ -22,11 +22,7 @@ const RecurringRuleSchema = CollectionSchema(
       name: r'accountId',
       type: IsarType.long,
     ),
-    r'amount': PropertySchema(
-      id: 1,
-      name: r'amount',
-      type: IsarType.double,
-    ),
+    r'amount': PropertySchema(id: 1, name: r'amount', type: IsarType.double),
     r'categoryId': PropertySchema(
       id: 2,
       name: r'categoryId',
@@ -48,11 +44,7 @@ const RecurringRuleSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _RecurringRulefrequencyEnumValueMap,
     ),
-    r'isActive': PropertySchema(
-      id: 6,
-      name: r'isActive',
-      type: IsarType.bool,
-    ),
+    r'isActive': PropertySchema(id: 6, name: r'isActive', type: IsarType.bool),
     r'lastExecutedAt': PropertySchema(
       id: 7,
       name: r'lastExecutedAt',
@@ -63,11 +55,7 @@ const RecurringRuleSchema = CollectionSchema(
       name: r'nextExecutionAt',
       type: IsarType.dateTime,
     ),
-    r'note': PropertySchema(
-      id: 9,
-      name: r'note',
-      type: IsarType.string,
-    ),
+    r'note': PropertySchema(id: 9, name: r'note', type: IsarType.string),
     r'startDate': PropertySchema(
       id: 10,
       name: r'startDate',
@@ -78,7 +66,7 @@ const RecurringRuleSchema = CollectionSchema(
       name: r'transactionType',
       type: IsarType.byte,
       enumMap: _RecurringRuletransactionTypeEnumValueMap,
-    )
+    ),
   },
   estimateSize: _recurringRuleEstimateSize,
   serialize: _recurringRuleSerialize,
@@ -143,15 +131,17 @@ RecurringRule _recurringRuleDeserialize(
   object.endDate = reader.readDateTimeOrNull(offsets[4]);
   object.frequency =
       _RecurringRulefrequencyValueEnumMap[reader.readByteOrNull(offsets[5])] ??
-          RecurringFrequency.daily;
+      RecurringFrequency.daily;
   object.id = id;
   object.isActive = reader.readBool(offsets[6]);
   object.lastExecutedAt = reader.readDateTimeOrNull(offsets[7]);
   object.nextExecutionAt = reader.readDateTimeOrNull(offsets[8]);
   object.note = reader.readStringOrNull(offsets[9]);
   object.startDate = reader.readDateTime(offsets[10]);
-  object.transactionType = _RecurringRuletransactionTypeValueEnumMap[
-          reader.readByteOrNull(offsets[11])] ??
+  object.transactionType =
+      _RecurringRuletransactionTypeValueEnumMap[reader.readByteOrNull(
+        offsets[11],
+      )] ??
       TransactionType.expense;
   return object;
 }
@@ -174,9 +164,11 @@ P _recurringRuleDeserializeProp<P>(
     case 4:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 5:
-      return (_RecurringRulefrequencyValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          RecurringFrequency.daily) as P;
+      return (_RecurringRulefrequencyValueEnumMap[reader.readByteOrNull(
+                offset,
+              )] ??
+              RecurringFrequency.daily)
+          as P;
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
@@ -188,9 +180,11 @@ P _recurringRuleDeserializeProp<P>(
     case 10:
       return (reader.readDateTime(offset)) as P;
     case 11:
-      return (_RecurringRuletransactionTypeValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          TransactionType.expense) as P;
+      return (_RecurringRuletransactionTypeValueEnumMap[reader.readByteOrNull(
+                offset,
+              )] ??
+              TransactionType.expense)
+          as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -228,7 +222,10 @@ List<IsarLinkBase<dynamic>> _recurringRuleGetLinks(RecurringRule object) {
 }
 
 void _recurringRuleAttach(
-    IsarCollection<dynamic> col, Id id, RecurringRule object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  RecurringRule object,
+) {
   object.id = id;
 }
 
@@ -244,17 +241,16 @@ extension RecurringRuleQueryWhereSort
 extension RecurringRuleQueryWhere
     on QueryBuilder<RecurringRule, RecurringRule, QWhereClause> {
   QueryBuilder<RecurringRule, RecurringRule, QAfterWhereClause> idEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -277,8 +273,9 @@ extension RecurringRuleQueryWhere
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -287,8 +284,9 @@ extension RecurringRuleQueryWhere
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterWhereClause> idLessThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -303,12 +301,14 @@ extension RecurringRuleQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -316,127 +316,129 @@ extension RecurringRuleQueryWhere
 extension RecurringRuleQueryFilter
     on QueryBuilder<RecurringRule, RecurringRule, QFilterCondition> {
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdIsNull() {
+  accountIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'accountId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'accountId'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdIsNotNull() {
+  accountIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'accountId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'accountId'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdEqualTo(int? value) {
+  accountIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'accountId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'accountId', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  accountIdGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'accountId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'accountId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  accountIdLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'accountId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'accountId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      accountIdBetween(
+  accountIdBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'accountId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'accountId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      amountEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+  amountEqualTo(double value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'amount',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'amount',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      amountGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'amount',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      amountLessThan(
+  amountGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'amount',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'amount',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      amountBetween(
+  amountLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'amount',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
+  amountBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -444,298 +446,295 @@ extension RecurringRuleQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'amount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'amount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdIsNull() {
+  categoryIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'categoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'categoryId'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdIsNotNull() {
+  categoryIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'categoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'categoryId'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdEqualTo(int? value) {
+  categoryIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'categoryId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'categoryId', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  categoryIdGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'categoryId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'categoryId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  categoryIdLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'categoryId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'categoryId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      categoryIdBetween(
+  categoryIdBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'categoryId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'categoryId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      createdAtEqualTo(DateTime value) {
+  createdAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      createdAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  createdAtGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      createdAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  createdAtLessThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      createdAtBetween(
+  createdAtBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateIsNull() {
+  endDateIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'endDate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'endDate'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateIsNotNull() {
+  endDateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'endDate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'endDate'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateEqualTo(DateTime? value) {
+  endDateEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'endDate', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  endDateGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'endDate',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  endDateLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'endDate',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      endDateBetween(
+  endDateBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'endDate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'endDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      frequencyEqualTo(RecurringFrequency value) {
+  frequencyEqualTo(RecurringFrequency value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'frequency',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'frequency', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      frequencyGreaterThan(
-    RecurringFrequency value, {
-    bool include = false,
-  }) {
+  frequencyGreaterThan(RecurringFrequency value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'frequency',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'frequency',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      frequencyLessThan(
-    RecurringFrequency value, {
-    bool include = false,
-  }) {
+  frequencyLessThan(RecurringFrequency value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'frequency',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'frequency',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      frequencyBetween(
+  frequencyBetween(
     RecurringFrequency lower,
     RecurringFrequency upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'frequency',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'frequency',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -744,11 +743,13 @@ extension RecurringRuleQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -759,189 +760,188 @@ extension RecurringRuleQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      isActiveEqualTo(bool value) {
+  isActiveEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isActive',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isActive', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtIsNull() {
+  lastExecutedAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastExecutedAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'lastExecutedAt'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtIsNotNull() {
+  lastExecutedAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastExecutedAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'lastExecutedAt'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtEqualTo(DateTime? value) {
+  lastExecutedAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastExecutedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'lastExecutedAt', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  lastExecutedAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lastExecutedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'lastExecutedAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  lastExecutedAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lastExecutedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'lastExecutedAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      lastExecutedAtBetween(
+  lastExecutedAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lastExecutedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'lastExecutedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtIsNull() {
+  nextExecutionAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nextExecutionAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nextExecutionAt'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtIsNotNull() {
+  nextExecutionAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nextExecutionAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nextExecutionAt'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtEqualTo(DateTime? value) {
+  nextExecutionAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nextExecutionAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nextExecutionAt', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  nextExecutionAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nextExecutionAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nextExecutionAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  nextExecutionAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nextExecutionAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nextExecutionAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      nextExecutionAtBetween(
+  nextExecutionAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nextExecutionAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nextExecutionAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteIsNull() {
+  noteIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'note',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'note'),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteIsNotNull() {
+  noteIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'note',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'note'),
+      );
     });
   }
 
@@ -950,43 +950,49 @@ extension RecurringRuleQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteGreaterThan(
+  noteGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteLessThan(
+  noteLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -998,197 +1004,198 @@ extension RecurringRuleQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'note',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'note',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  noteStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  noteEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteContains(String value, {bool caseSensitive = true}) {
+  noteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition> noteMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'note',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      noteIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'note',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      startDateEqualTo(DateTime value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'startDate',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      startDateGreaterThan(
-    DateTime value, {
-    bool include = false,
+    String pattern, {
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'startDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'note',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      startDateLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  noteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'startDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'note', value: ''),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      startDateBetween(
+  noteIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'note', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
+  startDateEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'startDate', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
+  startDateGreaterThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'startDate',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
+  startDateLessThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'startDate',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
+  startDateBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'startDate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'startDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      transactionTypeEqualTo(TransactionType value) {
+  transactionTypeEqualTo(TransactionType value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'transactionType',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'transactionType', value: value),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      transactionTypeGreaterThan(
-    TransactionType value, {
-    bool include = false,
-  }) {
+  transactionTypeGreaterThan(TransactionType value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'transactionType',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'transactionType',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      transactionTypeLessThan(
-    TransactionType value, {
-    bool include = false,
-  }) {
+  transactionTypeLessThan(TransactionType value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'transactionType',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'transactionType',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterFilterCondition>
-      transactionTypeBetween(
+  transactionTypeBetween(
     TransactionType lower,
     TransactionType upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'transactionType',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'transactionType',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -1208,7 +1215,7 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByAccountIdDesc() {
+  sortByAccountIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'accountId', Sort.desc);
     });
@@ -1233,7 +1240,7 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByCategoryIdDesc() {
+  sortByCategoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'categoryId', Sort.desc);
     });
@@ -1246,7 +1253,7 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByCreatedAtDesc() {
+  sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
@@ -1271,7 +1278,7 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByFrequencyDesc() {
+  sortByFrequencyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'frequency', Sort.desc);
     });
@@ -1284,35 +1291,35 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByIsActiveDesc() {
+  sortByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByLastExecutedAt() {
+  sortByLastExecutedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastExecutedAt', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByLastExecutedAtDesc() {
+  sortByLastExecutedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastExecutedAt', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByNextExecutionAt() {
+  sortByNextExecutionAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextExecutionAt', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByNextExecutionAtDesc() {
+  sortByNextExecutionAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextExecutionAt', Sort.desc);
     });
@@ -1337,21 +1344,21 @@ extension RecurringRuleQuerySortBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByStartDateDesc() {
+  sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByTransactionType() {
+  sortByTransactionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transactionType', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      sortByTransactionTypeDesc() {
+  sortByTransactionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transactionType', Sort.desc);
     });
@@ -1367,7 +1374,7 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByAccountIdDesc() {
+  thenByAccountIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'accountId', Sort.desc);
     });
@@ -1392,7 +1399,7 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByCategoryIdDesc() {
+  thenByCategoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'categoryId', Sort.desc);
     });
@@ -1405,7 +1412,7 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByCreatedAtDesc() {
+  thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
@@ -1430,7 +1437,7 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByFrequencyDesc() {
+  thenByFrequencyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'frequency', Sort.desc);
     });
@@ -1455,35 +1462,35 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByIsActiveDesc() {
+  thenByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByLastExecutedAt() {
+  thenByLastExecutedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastExecutedAt', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByLastExecutedAtDesc() {
+  thenByLastExecutedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastExecutedAt', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByNextExecutionAt() {
+  thenByNextExecutionAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextExecutionAt', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByNextExecutionAtDesc() {
+  thenByNextExecutionAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextExecutionAt', Sort.desc);
     });
@@ -1508,21 +1515,21 @@ extension RecurringRuleQuerySortThenBy
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByStartDateDesc() {
+  thenByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByTransactionType() {
+  thenByTransactionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transactionType', Sort.asc);
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QAfterSortBy>
-      thenByTransactionTypeDesc() {
+  thenByTransactionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transactionType', Sort.desc);
     });
@@ -1574,21 +1581,22 @@ extension RecurringRuleQueryWhereDistinct
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QDistinct>
-      distinctByLastExecutedAt() {
+  distinctByLastExecutedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastExecutedAt');
     });
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QDistinct>
-      distinctByNextExecutionAt() {
+  distinctByNextExecutionAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nextExecutionAt');
     });
   }
 
-  QueryBuilder<RecurringRule, RecurringRule, QDistinct> distinctByNote(
-      {bool caseSensitive = true}) {
+  QueryBuilder<RecurringRule, RecurringRule, QDistinct> distinctByNote({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'note', caseSensitive: caseSensitive);
     });
@@ -1601,7 +1609,7 @@ extension RecurringRuleQueryWhereDistinct
   }
 
   QueryBuilder<RecurringRule, RecurringRule, QDistinct>
-      distinctByTransactionType() {
+  distinctByTransactionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'transactionType');
     });
@@ -1647,7 +1655,7 @@ extension RecurringRuleQueryProperty
   }
 
   QueryBuilder<RecurringRule, RecurringFrequency, QQueryOperations>
-      frequencyProperty() {
+  frequencyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'frequency');
     });
@@ -1660,14 +1668,14 @@ extension RecurringRuleQueryProperty
   }
 
   QueryBuilder<RecurringRule, DateTime?, QQueryOperations>
-      lastExecutedAtProperty() {
+  lastExecutedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastExecutedAt');
     });
   }
 
   QueryBuilder<RecurringRule, DateTime?, QQueryOperations>
-      nextExecutionAtProperty() {
+  nextExecutionAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nextExecutionAt');
     });
@@ -1686,7 +1694,7 @@ extension RecurringRuleQueryProperty
   }
 
   QueryBuilder<RecurringRule, TransactionType, QQueryOperations>
-      transactionTypeProperty() {
+  transactionTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'transactionType');
     });
