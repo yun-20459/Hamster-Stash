@@ -5,6 +5,7 @@ import 'package:hamster_stash/core/database/collections/manual_valuation.dart';
 import 'package:hamster_stash/core/database/collections/receivable_payable.dart';
 import 'package:hamster_stash/core/database/collections/recurring_rule.dart';
 import 'package:hamster_stash/core/database/collections/transaction.dart';
+import 'package:hamster_stash/core/utils/encryption_helper.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -19,6 +20,10 @@ class DatabaseHelper {
   }
 
   static Future<Isar> _openDatabase() async {
+    // Initialise field-level encryption key from secure storage
+    // (iOS Keychain / Android Keystore) before any DB access.
+    await EncryptionHelper.init();
+
     final dir = await getApplicationDocumentsDirectory();
 
     return Isar.open(
