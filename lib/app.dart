@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:hamster_stash/core/theme/app_theme.dart';
+import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
 
 final _router = GoRouter(
-  initialLocation: '/accounts',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScaffoldWithNavBar(navigationShell: navigationShell);
@@ -14,9 +16,9 @@ final _router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/accounts',
+              path: '/overview',
               builder: (context, state) => const _PlaceholderScreen(
-                title: 'Accounts',
+                title: '總覽',
                 icon: Icons.account_balance_wallet,
               ),
             ),
@@ -25,22 +27,9 @@ final _router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/transactions',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: 'Transactions',
-                icon: Icons.receipt_long,
-              ),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/budget',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: 'Budget',
-                icon: Icons.pie_chart,
-              ),
+              path: '/bookkeeping',
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '記帳', icon: Icons.edit_note),
             ),
           ],
         ),
@@ -48,10 +37,17 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/reports',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: 'Reports',
-                icon: Icons.bar_chart,
-              ),
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '報表', icon: Icons.bar_chart),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/settings',
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '設定', icon: Icons.settings),
             ),
           ],
         ),
@@ -83,27 +79,23 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) => navigationShell.goBranch(
-          index,
-          initialLocation: index == navigationShell.currentIndex,
+      bottomNavigationBar: SafeArea(
+        child: BottomNavigationBar(
+          currentIndex: navigationShell.currentIndex,
+          onTap: (index) => navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          ),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet),
+              label: '總覽',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: '記帳'),
+            BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '報表'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: '設定'),
+          ],
         ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: 'Accounts',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: 'Transactions',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Budget'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Reports',
-          ),
-        ],
       ),
     );
   }
