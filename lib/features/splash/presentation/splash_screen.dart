@@ -26,9 +26,10 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    _scale = Tween<double>(begin: 0.6, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _scale = Tween<double>(
+      begin: 0.6,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
     _slideUp = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,

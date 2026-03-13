@@ -7,10 +7,7 @@ import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
 final _router = GoRouter(
   initialLocation: '/splash',
   routes: [
-    GoRoute(
-      path: '/splash',
-      builder: (context, state) => const SplashScreen(),
-    ),
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScaffoldWithNavBar(navigationShell: navigationShell);
@@ -31,10 +28,8 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/bookkeeping',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: '記帳',
-                icon: Icons.edit_note,
-              ),
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '記帳', icon: Icons.edit_note),
             ),
           ],
         ),
@@ -42,10 +37,8 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/reports',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: '報表',
-                icon: Icons.bar_chart,
-              ),
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '報表', icon: Icons.bar_chart),
             ),
           ],
         ),
@@ -53,10 +46,8 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/settings',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: '設定',
-                icon: Icons.settings,
-              ),
+              builder: (context, state) =>
+                  const _PlaceholderScreen(title: '設定', icon: Icons.settings),
             ),
           ],
         ),
@@ -100,18 +91,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
               icon: Icon(Icons.account_balance_wallet),
               label: '總覽',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.edit_note),
-              label: '記帳',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: '報表',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '設定',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: '記帳'),
+            BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '報表'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: '設定'),
           ],
         ),
       ),
