@@ -19,18 +19,15 @@ void main() {
       expect(find.textContaining(r'NT$'), findsWidgets);
     });
 
-    testWidgets(
-      'given overview page, '
-      'then shows current, non-current, '
-      'and net worth summary cards',
-      (tester) async {
-        await tester.pumpWidget(buildTestWidget());
+    testWidgets('given overview page, '
+        'then shows current, non-current, '
+        'and net worth summary cards', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
 
-        expect(find.text('短期資產'), findsOneWidget);
-        expect(find.text('長期資產'), findsOneWidget);
-        expect(find.text('淨資產'), findsOneWidget);
-      },
-    );
+      expect(find.text('短期資產'), findsOneWidget);
+      expect(find.text('長期資產'), findsOneWidget);
+      expect(find.text('淨資產'), findsOneWidget);
+    });
 
     testWidgets('given overview page, then shows account list header', (
       tester,
@@ -59,23 +56,20 @@ void main() {
       expect(find.text('不動產'), findsOneWidget);
     });
 
-    testWidgets(
-      'given current and non-current accounts, '
-      'then shows correct asset term tags',
-      (tester) async {
-        await tester.pumpWidget(buildTestWidget());
+    testWidgets('given current and non-current accounts, '
+        'then shows correct asset term tags', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
 
-        final listView = find.byType(Scrollable).first;
+      final listView = find.byType(Scrollable).first;
 
-        expect(find.text('短期'), findsAtLeast(1));
+      expect(find.text('短期'), findsAtLeast(1));
 
-        await tester.scrollUntilVisible(
-          find.text('長期'),
-          200,
-          scrollable: listView,
-        );
-        expect(find.text('長期'), findsAtLeast(1));
-      },
-    );
+      await tester.scrollUntilVisible(
+        find.text('長期'),
+        200,
+        scrollable: listView,
+      );
+      expect(find.text('長期'), findsAtLeast(1));
+    });
   });
 }
