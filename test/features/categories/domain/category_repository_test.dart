@@ -129,7 +129,7 @@ void main() {
       verify(() => repo.delete(1)).called(1);
     });
 
-    test('given parent category with children, '
+    test('given parent with children, '
         'when deleteWithChildren(id), '
         'then removes parent and all children', () async {
       when(() => repo.deleteWithChildren(1)).thenAnswer((_) async {});

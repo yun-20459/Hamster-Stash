@@ -88,8 +88,7 @@ void main() {
 
   group('CategoryPicker', () {
     testWidgets('given expense type, when loaded, '
-        'then shows expense parent categories '
-        'in grid', (tester) async {
+        'then shows expense parent categories', (tester) async {
       await tester.pumpWidget(buildPicker());
       await tester.pumpAndSettle();
 
@@ -107,9 +106,8 @@ void main() {
       },
     );
 
-    testWidgets('given parent category with children, '
-        'when tapped, '
-        'then shows child categories', (tester) async {
+    testWidgets('given parent with children, '
+        'when tapped, then shows child categories', (tester) async {
       await tester.pumpWidget(buildPicker());
       await tester.pumpAndSettle();
 
