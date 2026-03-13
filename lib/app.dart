@@ -88,30 +88,32 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) => navigationShell.goBranch(
-          index,
-          initialLocation: index == navigationShell.currentIndex,
+      bottomNavigationBar: SafeArea(
+        child: BottomNavigationBar(
+          currentIndex: navigationShell.currentIndex,
+          onTap: (index) => navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          ),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet),
+              label: '總覽',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.edit_note),
+              label: '記帳',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: '報表',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: '設定',
+            ),
+          ],
         ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: '總覽',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit_note),
-            label: '記帳',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: '報表',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '設定',
-          ),
-        ],
       ),
     );
   }
