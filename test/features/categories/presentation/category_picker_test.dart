@@ -87,18 +87,15 @@ void main() {
   }
 
   group('CategoryPicker', () {
-    testWidgets(
-      'given expense type, when loaded, '
-      'then shows expense parent categories '
-      'in grid',
-      (tester) async {
-        await tester.pumpWidget(buildPicker());
-        await tester.pumpAndSettle();
+    testWidgets('given expense type, when loaded, '
+        'then shows expense parent categories '
+        'in grid', (tester) async {
+      await tester.pumpWidget(buildPicker());
+      await tester.pumpAndSettle();
 
-        expect(find.text('Food'), findsOneWidget);
-        expect(find.text('Transport'), findsOneWidget);
-      },
-    );
+      expect(find.text('Food'), findsOneWidget);
+      expect(find.text('Transport'), findsOneWidget);
+    });
 
     testWidgets(
       'given income type, when loaded, then shows income parent categories',
@@ -110,21 +107,18 @@ void main() {
       },
     );
 
-    testWidgets(
-      'given parent category with children, '
-      'when tapped, '
-      'then shows child categories',
-      (tester) async {
-        await tester.pumpWidget(buildPicker());
-        await tester.pumpAndSettle();
+    testWidgets('given parent category with children, '
+        'when tapped, '
+        'then shows child categories', (tester) async {
+      await tester.pumpWidget(buildPicker());
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Food'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('Food'));
+      await tester.pumpAndSettle();
 
-        expect(find.text('Groceries'), findsOneWidget);
-        expect(find.text('Dining Out'), findsOneWidget);
-      },
-    );
+      expect(find.text('Groceries'), findsOneWidget);
+      expect(find.text('Dining Out'), findsOneWidget);
+    });
 
     testWidgets(
       'given child categories shown, when child tapped, then calls onSelected',
@@ -144,21 +138,18 @@ void main() {
       },
     );
 
-    testWidgets(
-      'given parent with no children, '
-      'when tapped, '
-      'then calls onSelected with parent',
-      (tester) async {
-        Category? selected;
-        await tester.pumpWidget(buildPicker(onSelected: (c) => selected = c));
-        await tester.pumpAndSettle();
+    testWidgets('given parent with no children, '
+        'when tapped, '
+        'then calls onSelected with parent', (tester) async {
+      Category? selected;
+      await tester.pumpWidget(buildPicker(onSelected: (c) => selected = c));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Transport'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('Transport'));
+      await tester.pumpAndSettle();
 
-        expect(selected, isNotNull);
-        expect(selected!.name, 'Transport');
-      },
-    );
+      expect(selected, isNotNull);
+      expect(selected!.name, 'Transport');
+    });
   });
 }

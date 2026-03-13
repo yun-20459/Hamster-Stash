@@ -35,59 +35,47 @@ void main() {
   });
 
   group('AccountRepository', () {
-    test(
-      'given active accounts exist, '
-      'when getActive(), '
-      'then returns only non-archived accounts',
-      () async {
-        final accounts = [
-          _makeAccount(),
-          _makeAccount(id: 2, name: 'Firstrade'),
-        ];
-        when(() => repo.getActive()).thenAnswer((_) async => accounts);
+    test('given active accounts exist, '
+        'when getActive(), '
+        'then returns only non-archived accounts', () async {
+      final accounts = [_makeAccount(), _makeAccount(id: 2, name: 'Firstrade')];
+      when(() => repo.getActive()).thenAnswer((_) async => accounts);
 
-        final result = await repo.getActive();
+      final result = await repo.getActive();
 
-        expect(result, hasLength(2));
-        expect(result.every((a) => !a.isArchived), isTrue);
-      },
-    );
+      expect(result, hasLength(2));
+      expect(result.every((a) => !a.isArchived), isTrue);
+    });
 
-    test(
-      'given accounts with different asset terms, '
-      'when getByAssetTerm(current), '
-      'then returns only current accounts',
-      () async {
-        final currentAccounts = [_makeAccount()];
-        when(
-          () => repo.getByAssetTerm(AssetTerm.current),
-        ).thenAnswer((_) async => currentAccounts);
+    test('given accounts with different asset terms, '
+        'when getByAssetTerm(current), '
+        'then returns only current accounts', () async {
+      final currentAccounts = [_makeAccount()];
+      when(
+        () => repo.getByAssetTerm(AssetTerm.current),
+      ).thenAnswer((_) async => currentAccounts);
 
-        final result = await repo.getByAssetTerm(AssetTerm.current);
+      final result = await repo.getByAssetTerm(AssetTerm.current);
 
-        expect(result, hasLength(1));
-        expect(result[0].assetTerm, AssetTerm.current);
-      },
-    );
+      expect(result, hasLength(1));
+      expect(result[0].assetTerm, AssetTerm.current);
+    });
 
-    test(
-      'given long term accounts exist, '
-      'when getByAssetTerm(longTerm), '
-      'then returns only long term accounts',
-      () async {
-        final longTermAccounts = [
-          _makeAccount(id: 3, name: '不動產', assetTerm: AssetTerm.longTerm),
-        ];
-        when(
-          () => repo.getByAssetTerm(AssetTerm.longTerm),
-        ).thenAnswer((_) async => longTermAccounts);
+    test('given long term accounts exist, '
+        'when getByAssetTerm(longTerm), '
+        'then returns only long term accounts', () async {
+      final longTermAccounts = [
+        _makeAccount(id: 3, name: '不動產', assetTerm: AssetTerm.longTerm),
+      ];
+      when(
+        () => repo.getByAssetTerm(AssetTerm.longTerm),
+      ).thenAnswer((_) async => longTermAccounts);
 
-        final result = await repo.getByAssetTerm(AssetTerm.longTerm);
+      final result = await repo.getByAssetTerm(AssetTerm.longTerm);
 
-        expect(result, hasLength(1));
-        expect(result[0].assetTerm, AssetTerm.longTerm);
-      },
-    );
+      expect(result, hasLength(1));
+      expect(result[0].assetTerm, AssetTerm.longTerm);
+    });
 
     test(
       'given new account, when add(account), then returns assigned id',
@@ -160,34 +148,25 @@ void main() {
       },
     );
 
-    test(
-      'given account, '
-      'when updateBalance(id, newBalance), '
-      'then updates cached balance',
-      () async {
-        when(() => repo.updateBalance(1, 75000)).thenAnswer((_) async {});
+    test('given account, '
+        'when updateBalance(id, newBalance), '
+        'then updates cached balance', () async {
+      when(() => repo.updateBalance(1, 75000)).thenAnswer((_) async {});
 
-        await repo.updateBalance(1, 75000);
+      await repo.updateBalance(1, 75000);
 
-        verify(() => repo.updateBalance(1, 75000)).called(1);
-      },
-    );
+      verify(() => repo.updateBalance(1, 75000)).called(1);
+    });
 
-    test(
-      'given all accounts requested, '
-      'when getAll(), '
-      'then returns active and archived',
-      () async {
-        final accounts = [
-          _makeAccount(),
-          _makeAccount(id: 2, isArchived: true),
-        ];
-        when(() => repo.getAll()).thenAnswer((_) async => accounts);
+    test('given all accounts requested, '
+        'when getAll(), '
+        'then returns active and archived', () async {
+      final accounts = [_makeAccount(), _makeAccount(id: 2, isArchived: true)];
+      when(() => repo.getAll()).thenAnswer((_) async => accounts);
 
-        final result = await repo.getAll();
+      final result = await repo.getAll();
 
-        expect(result, hasLength(2));
-      },
-    );
+      expect(result, hasLength(2));
+    });
   });
 }
