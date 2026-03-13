@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:hamster_stash/core/theme/app_theme.dart';
+import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
 import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
 
 final _router = GoRouter(
@@ -17,10 +18,7 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/overview',
-              builder: (context, state) => const _PlaceholderScreen(
-                title: '總覽',
-                icon: Icons.account_balance_wallet,
-              ),
+              builder: (context, state) => const OverviewScreen(),
             ),
           ],
         ),
