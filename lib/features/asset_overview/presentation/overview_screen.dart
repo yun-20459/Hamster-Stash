@@ -271,7 +271,8 @@ class _AccountCard extends StatelessWidget {
 
 String _formatAmount(double value) {
   // Simple thousands separator
-  final parts = value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2)
+  final parts = value
+      .toStringAsFixed(value.truncateToDouble() == value ? 0 : 2)
       .split('.');
   final intPart = parts[0].replaceAllMapped(
     RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
