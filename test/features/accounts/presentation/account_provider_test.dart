@@ -40,10 +40,12 @@ void main() {
 
   group('activeAccountsProvider', () {
     test(
-      'given active accounts exist, when reading provider, then returns active account list',
+      'given active accounts exist, '
+      'when reading provider, '
+      'then returns active account list',
       () async {
         final accounts = [
-          _makeAccount(id: 1, name: '國泰世華'),
+          _makeAccount(),
           _makeAccount(id: 2, name: 'Firstrade'),
         ];
         when(() => mockRepo.getActive()).thenAnswer((_) async => accounts);
@@ -58,11 +60,11 @@ void main() {
 
   group('currentAssetsProvider', () {
     test(
-      'given current term accounts, when reading provider, then returns only current accounts',
+      'given current term accounts, '
+      'when reading provider, '
+      'then returns only current accounts',
       () async {
-        final accounts = [
-          _makeAccount(id: 1, balance: 50000, assetTerm: AssetTerm.current),
-        ];
+        final accounts = [_makeAccount()];
         when(
           () => mockRepo.getByAssetTerm(AssetTerm.current),
         ).thenAnswer((_) async => accounts);
@@ -77,7 +79,9 @@ void main() {
 
   group('accountByIdProvider', () {
     test(
-      'given account exists, when reading accountByIdProvider(id), then returns account',
+      'given account exists, '
+      'when reading accountByIdProvider(id), '
+      'then returns account',
       () async {
         final account = _makeAccount(id: 5, name: 'Cash');
         when(() => mockRepo.getById(5)).thenAnswer((_) async => account);

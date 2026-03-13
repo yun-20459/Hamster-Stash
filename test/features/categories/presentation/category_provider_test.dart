@@ -42,10 +42,12 @@ void main() {
 
   group('expenseParentsProvider', () {
     test(
-      'given expense parents exist, when reading provider, then returns expense parent list',
+      'given expense parents exist, '
+      'when reading provider, '
+      'then returns expense parent list',
       () async {
         final parents = [
-          _makeCategory(id: 1, name: 'Food'),
+          _makeCategory(),
           _makeCategory(id: 2, name: 'Transport'),
         ];
         when(
@@ -62,7 +64,9 @@ void main() {
 
   group('incomeParentsProvider', () {
     test(
-      'given income parents exist, when reading provider, then returns income parent list',
+      'given income parents exist, '
+      'when reading provider, '
+      'then returns income parent list',
       () async {
         final parents = [
           _makeCategory(id: 10, name: 'Salary', type: CategoryType.income),
@@ -81,7 +85,9 @@ void main() {
 
   group('childrenProvider', () {
     test(
-      'given parent has children, when reading childrenProvider(parentId), then returns children',
+      'given parent has children, '
+      'when reading childrenProvider(parentId), '
+      'then returns children',
       () async {
         final children = [
           _makeCategory(id: 100, name: 'Groceries', parentId: 1),

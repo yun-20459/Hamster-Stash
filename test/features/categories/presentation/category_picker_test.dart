@@ -39,7 +39,7 @@ void main() {
     // Default stubs
     when(() => mockRepo.getParentsByType(CategoryType.expense)).thenAnswer(
       (_) async => [
-        _makeCategory(id: 1, name: 'Food', iconEmoji: '\u{1F354}'),
+        _makeCategory(),
         _makeCategory(id: 2, name: 'Transport', iconEmoji: '\u{1F697}'),
       ],
     );
@@ -88,7 +88,9 @@ void main() {
 
   group('CategoryPicker', () {
     testWidgets(
-      'given expense type, when loaded, then shows expense parent categories in grid',
+      'given expense type, when loaded, '
+      'then shows expense parent categories '
+      'in grid',
       (tester) async {
         await tester.pumpWidget(buildPicker());
         await tester.pumpAndSettle();
@@ -109,7 +111,9 @@ void main() {
     );
 
     testWidgets(
-      'given parent category with children, when tapped, then shows child categories',
+      'given parent category with children, '
+      'when tapped, '
+      'then shows child categories',
       (tester) async {
         await tester.pumpWidget(buildPicker());
         await tester.pumpAndSettle();
@@ -141,7 +145,9 @@ void main() {
     );
 
     testWidgets(
-      'given parent with no children, when tapped, then calls onSelected with parent',
+      'given parent with no children, '
+      'when tapped, '
+      'then calls onSelected with parent',
       (tester) async {
         Category? selected;
         await tester.pumpWidget(buildPicker(onSelected: (c) => selected = c));

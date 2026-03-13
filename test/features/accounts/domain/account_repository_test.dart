@@ -36,10 +36,12 @@ void main() {
 
   group('AccountRepository', () {
     test(
-      'given active accounts exist, when getActive(), then returns only non-archived accounts',
+      'given active accounts exist, '
+      'when getActive(), '
+      'then returns only non-archived accounts',
       () async {
         final accounts = [
-          _makeAccount(id: 1, name: '國泰世華'),
+          _makeAccount(),
           _makeAccount(id: 2, name: 'Firstrade'),
         ];
         when(() => repo.getActive()).thenAnswer((_) async => accounts);
@@ -52,11 +54,11 @@ void main() {
     );
 
     test(
-      'given accounts with different asset terms, when getByAssetTerm(current), then returns only current accounts',
+      'given accounts with different asset terms, '
+      'when getByAssetTerm(current), '
+      'then returns only current accounts',
       () async {
-        final currentAccounts = [
-          _makeAccount(id: 1, assetTerm: AssetTerm.current),
-        ];
+        final currentAccounts = [_makeAccount()];
         when(
           () => repo.getByAssetTerm(AssetTerm.current),
         ).thenAnswer((_) async => currentAccounts);
@@ -69,7 +71,9 @@ void main() {
     );
 
     test(
-      'given long term accounts exist, when getByAssetTerm(longTerm), then returns only long term accounts',
+      'given long term accounts exist, '
+      'when getByAssetTerm(longTerm), '
+      'then returns only long term accounts',
       () async {
         final longTermAccounts = [
           _makeAccount(id: 3, name: '不動產', assetTerm: AssetTerm.longTerm),
@@ -101,7 +105,7 @@ void main() {
     test(
       'given existing account, when update(account), then completes',
       () async {
-        final account = _makeAccount(id: 1, name: 'Updated');
+        final account = _makeAccount(name: 'Updated');
         when(() => repo.update(account)).thenAnswer((_) async {});
 
         await repo.update(account);
@@ -157,7 +161,9 @@ void main() {
     );
 
     test(
-      'given account, when updateBalance(id, newBalance), then updates cached balance',
+      'given account, '
+      'when updateBalance(id, newBalance), '
+      'then updates cached balance',
       () async {
         when(() => repo.updateBalance(1, 75000)).thenAnswer((_) async {});
 
@@ -168,10 +174,12 @@ void main() {
     );
 
     test(
-      'given all accounts requested, when getAll(), then returns active and archived',
+      'given all accounts requested, '
+      'when getAll(), '
+      'then returns active and archived',
       () async {
         final accounts = [
-          _makeAccount(id: 1, isArchived: false),
+          _makeAccount(),
           _makeAccount(id: 2, isArchived: true),
         ];
         when(() => repo.getAll()).thenAnswer((_) async => accounts);
