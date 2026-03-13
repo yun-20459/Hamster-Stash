@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:hamster_stash/core/theme/app_theme.dart';
 import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
+import 'package:hamster_stash/features/settings/presentation/settings_screen.dart';
 import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
+import 'package:hamster_stash/features/transactions/presentation/bookkeeping_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/splash',
@@ -26,8 +28,7 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/bookkeeping',
-              builder: (context, state) =>
-                  const _PlaceholderScreen(title: '記帳', icon: Icons.edit_note),
+              builder: (context, state) => const BookkeepingScreen(),
             ),
           ],
         ),
@@ -44,8 +45,7 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/settings',
-              builder: (context, state) =>
-                  const _PlaceholderScreen(title: '設定', icon: Icons.settings),
+              builder: (context, state) => const SettingsScreen(),
             ),
           ],
         ),
