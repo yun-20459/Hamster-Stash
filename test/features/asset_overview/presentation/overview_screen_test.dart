@@ -20,7 +20,9 @@ void main() {
     });
 
     testWidgets(
-      'given overview page, then shows current, non-current, and net worth summary cards',
+      'given overview page, '
+      'then shows current, non-current, '
+      'and net worth summary cards',
       (tester) async {
         await tester.pumpWidget(buildTestWidget());
 
@@ -58,7 +60,8 @@ void main() {
     });
 
     testWidgets(
-      'given current and non-current accounts, then shows correct asset term tags',
+      'given current and non-current accounts, '
+      'then shows correct asset term tags',
       (tester) async {
         await tester.pumpWidget(buildTestWidget());
 

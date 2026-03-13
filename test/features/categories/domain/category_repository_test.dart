@@ -37,10 +37,12 @@ void main() {
 
   group('CategoryRepository', () {
     test(
-      'given expense categories exist, when getParentsByType(expense), then returns only parent categories',
+      'given expense categories exist, '
+      'when getParentsByType(expense), '
+      'then returns only parent categories',
       () async {
         final parents = [
-          _makeCategory(id: 1, name: 'Food'),
+          _makeCategory(),
           _makeCategory(id: 2, name: 'Transport'),
         ];
         when(
@@ -56,7 +58,9 @@ void main() {
     );
 
     test(
-      'given income categories exist, when getParentsByType(income), then returns only income parents',
+      'given income categories exist, '
+      'when getParentsByType(income), '
+      'then returns only income parents',
       () async {
         final parents = [
           _makeCategory(id: 10, name: 'Salary', type: CategoryType.income),
@@ -73,7 +77,9 @@ void main() {
     );
 
     test(
-      'given parent category with children, when getChildrenOf(parentId), then returns child categories',
+      'given parent category with children, '
+      'when getChildrenOf(parentId), '
+      'then returns child categories',
       () async {
         final children = [
           _makeCategory(id: 100, name: 'Groceries', parentId: 1),
@@ -89,7 +95,9 @@ void main() {
     );
 
     test(
-      'given parent category with no children, when getChildrenOf(parentId), then returns empty list',
+      'given parent with no children, '
+      'when getChildrenOf(parentId), '
+      'then returns empty list',
       () async {
         when(() => repo.getChildrenOf(99)).thenAnswer((_) async => []);
 
@@ -113,9 +121,11 @@ void main() {
     );
 
     test(
-      'given existing category, when update(category), then completes successfully',
+      'given existing category, '
+      'when update(category), '
+      'then completes successfully',
       () async {
-        final category = _makeCategory(id: 1, name: 'Updated Food');
+        final category = _makeCategory(name: 'Updated Food');
         when(() => repo.update(category)).thenAnswer((_) async {});
 
         await repo.update(category);
@@ -125,7 +135,9 @@ void main() {
     );
 
     test(
-      'given category with no children, when delete(id), then removes the category',
+      'given category with no children, '
+      'when delete(id), '
+      'then removes the category',
       () async {
         when(() => repo.delete(1)).thenAnswer((_) async {});
 
@@ -136,7 +148,9 @@ void main() {
     );
 
     test(
-      'given parent category with children, when deleteWithChildren(id), then removes parent and all children',
+      'given parent with children, '
+      'when deleteWithChildren(id), '
+      'then removes parent and all children',
       () async {
         when(() => repo.deleteWithChildren(1)).thenAnswer((_) async {});
 
