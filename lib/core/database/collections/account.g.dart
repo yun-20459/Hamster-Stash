@@ -51,14 +51,19 @@ const AccountSchema = CollectionSchema(
     ),
     r'name': PropertySchema(id: 7, name: r'name', type: IsarType.string),
     r'note': PropertySchema(id: 8, name: r'note', type: IsarType.string),
-    r'type': PropertySchema(
+    r'stockSymbols': PropertySchema(
       id: 9,
+      name: r'stockSymbols',
+      type: IsarType.stringList,
+    ),
+    r'type': PropertySchema(
+      id: 10,
       name: r'type',
       type: IsarType.byte,
       enumMap: _AccounttypeEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -108,6 +113,13 @@ int _accountEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.stockSymbols.length * 3;
+  {
+    for (var i = 0; i < object.stockSymbols.length; i++) {
+      final value = object.stockSymbols[i];
+      bytesCount += value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -126,8 +138,9 @@ void _accountSerialize(
   writer.writeBool(offsets[6], object.isArchived);
   writer.writeString(offsets[7], object.name);
   writer.writeString(offsets[8], object.note);
-  writer.writeByte(offsets[9], object.type.index);
-  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeStringList(offsets[9], object.stockSymbols);
+  writer.writeByte(offsets[10], object.type.index);
+  writer.writeDateTime(offsets[11], object.updatedAt);
 }
 
 Account _accountDeserialize(
@@ -149,10 +162,11 @@ Account _accountDeserialize(
   object.isArchived = reader.readBool(offsets[6]);
   object.name = reader.readString(offsets[7]);
   object.note = reader.readStringOrNull(offsets[8]);
+  object.stockSymbols = reader.readStringList(offsets[9]) ?? [];
   object.type =
-      _AccounttypeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+      _AccounttypeValueEnumMap[reader.readByteOrNull(offsets[10])] ??
       AccountType.cash;
-  object.updatedAt = reader.readDateTimeOrNull(offsets[10]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[11]);
   return object;
 }
 
@@ -184,10 +198,12 @@ P _accountDeserializeProp<P>(
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 10:
       return (_AccounttypeValueEnumMap[reader.readByteOrNull(offset)] ??
               AccountType.cash)
           as P;
-    case 10:
+    case 11:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1362,6 +1378,199 @@ extension AccountQueryFilter
     });
   }
 
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'stockSymbols',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'stockSymbols',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'stockSymbols',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'stockSymbols', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'stockSymbols', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'stockSymbols', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition> stockSymbolsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'stockSymbols', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'stockSymbols', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'stockSymbols', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'stockSymbols', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<Account, Account, QAfterFilterCondition>
+  stockSymbolsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stockSymbols',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<Account, Account, QAfterFilterCondition> typeEqualTo(
     AccountType value,
   ) {
@@ -1850,6 +2059,12 @@ extension AccountQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Account, Account, QDistinct> distinctByStockSymbols() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stockSymbols');
+    });
+  }
+
   QueryBuilder<Account, Account, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type');
@@ -1922,6 +2137,12 @@ extension AccountQueryProperty
   QueryBuilder<Account, String?, QQueryOperations> noteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'note');
+    });
+  }
+
+  QueryBuilder<Account, List<String>, QQueryOperations> stockSymbolsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stockSymbols');
     });
   }
 
