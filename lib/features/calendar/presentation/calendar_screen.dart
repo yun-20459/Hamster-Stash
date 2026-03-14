@@ -65,40 +65,44 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       );
     });
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        TableCalendar<void>(
-          firstDay: DateTime(2025),
-          lastDay: DateTime(2027),
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-          onDaySelected: (selected, focused) {
-            setState(() {
-              _selectedDay = selected;
-              _focusedDay = focused;
-            });
-          },
-          onPageChanged: (focusedDay) {
-            setState(() => _focusedDay = focusedDay);
-          },
-          calendarBuilders: CalendarBuilders(
-            defaultBuilder: (ctx, day, focused) => _dayCell(day, dailySpending),
-            todayBuilder: (ctx, day, focused) => _dayCell(day, dailySpending),
-            selectedBuilder: (ctx, day, focused) =>
-                _dayCell(day, dailySpending, isSelected: true),
+    return Scaffold(
+      appBar: AppBar(title: const Text('日曆')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TableCalendar<void>(
+            firstDay: DateTime(2025),
+            lastDay: DateTime(2027),
+            focusedDay: _focusedDay,
+            selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+            onDaySelected: (selected, focused) {
+              setState(() {
+                _selectedDay = selected;
+                _focusedDay = focused;
+              });
+            },
+            onPageChanged: (focusedDay) {
+              setState(() => _focusedDay = focusedDay);
+            },
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (ctx, day, focused) =>
+                  _dayCell(day, dailySpending),
+              todayBuilder: (ctx, day, focused) => _dayCell(day, dailySpending),
+              selectedBuilder: (ctx, day, focused) =>
+                  _dayCell(day, dailySpending, isSelected: true),
+            ),
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+            ),
+            calendarStyle: const CalendarStyle(outsideDaysVisible: false),
           ),
-          headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
-            titleCentered: true,
-          ),
-          calendarStyle: const CalendarStyle(outsideDaysVisible: false),
-        ),
-        const Divider(height: 32),
-        Text('當日交易', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        _buildDayDetail(dayTransactions, dailySpending),
-      ],
+          const Divider(height: 32),
+          Text('當日交易', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          _buildDayDetail(dayTransactions, dailySpending),
+        ],
+      ),
     );
   }
 

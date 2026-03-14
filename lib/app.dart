@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hamster_stash/core/theme/app_theme.dart';
 import 'package:hamster_stash/features/accounts/presentation/add_account_form.dart';
 import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
+import 'package:hamster_stash/features/calendar/presentation/calendar_screen.dart';
 import 'package:hamster_stash/features/categories/presentation/category_management.dart';
 import 'package:hamster_stash/features/reports/presentation/reports_screen.dart';
 import 'package:hamster_stash/features/settings/presentation/settings_screen.dart';
@@ -39,6 +40,14 @@ final _router = GoRouter(
             GoRoute(
               path: '/bookkeeping',
               builder: (context, state) => const BookkeepingScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/calendar',
+              builder: (context, state) => const CalendarScreen(),
             ),
           ],
         ),
@@ -99,6 +108,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
               label: '總覽',
             ),
             BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: '記帳'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month),
+              label: '日曆',
+            ),
             BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '報表'),
             BottomNavigationBarItem(icon: Icon(Icons.settings), label: '設定'),
           ],
