@@ -109,8 +109,16 @@ void main() {
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
 
-      // Enter amount
-      await tester.enterText(find.byType(TextField).first, '500');
+      // Enter amount via keypad: 5, 0, 0
+      await tester.tap(find.text('5'));
+      await tester.pump();
+      await tester.tap(find.text('0').first);
+      await tester.pump();
+      await tester.tap(find.text('0').first);
+      await tester.pump();
+
+      await tester.ensureVisible(find.text('儲存'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('儲存'));
       await tester.pumpAndSettle();
 
@@ -138,7 +146,16 @@ void main() {
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextField).first, '500');
+      // Enter amount via keypad: 5, 0, 0
+      await tester.tap(find.text('5'));
+      await tester.pump();
+      await tester.tap(find.text('0').first);
+      await tester.pump();
+      await tester.tap(find.text('0').first);
+      await tester.pump();
+
+      await tester.ensureVisible(find.text('儲存'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('儲存'));
       await tester.pumpAndSettle();
 
