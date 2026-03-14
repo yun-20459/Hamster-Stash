@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:hamster_stash/core/theme/app_colors.dart';
 
@@ -21,13 +22,13 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.category,
             title: '分類管理',
             subtitle: '新增、編輯或刪除分類',
-            onTap: () {},
+            onTap: () => context.push('/category-management'),
           ),
           _SettingsTile(
             icon: Icons.account_balance_wallet,
             title: '帳戶管理',
             subtitle: '新增、編輯或刪除帳戶',
-            onTap: () {},
+            onTap: () => context.push('/add-account'),
           ),
           _SettingsTile(
             icon: Icons.repeat,

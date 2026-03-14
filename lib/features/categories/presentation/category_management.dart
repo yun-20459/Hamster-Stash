@@ -30,40 +30,37 @@ class _CategoryManagementState extends ConsumerState<CategoryManagement>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(child: Text('分類管理', style: theme.textTheme.titleLarge)),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _showAddDialog(context),
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('分類管理'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => _showAddDialog(context),
           ),
-        ),
-        TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: '支出'),
-            Tab(text: '收入'),
-          ],
-          labelColor: AppColors.primary,
-        ),
-        Expanded(
-          child: TabBarView(
+        ],
+      ),
+      body: Column(
+        children: [
+          TabBar(
             controller: _tabController,
-            children: const [
-              _CategoryList(type: CategoryType.expense),
-              _CategoryList(type: CategoryType.income),
+            tabs: const [
+              Tab(text: '支出'),
+              Tab(text: '收入'),
             ],
+            labelColor: AppColors.primary,
           ),
-        ),
-      ],
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                _CategoryList(type: CategoryType.expense),
+                _CategoryList(type: CategoryType.income),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

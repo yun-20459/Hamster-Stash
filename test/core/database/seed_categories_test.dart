@@ -55,7 +55,7 @@ void main() {
         'when children listed, '
         'then has expected subcategories', () {
       final food = defaultCategories.firstWhere(
-        (c) => c.name == 'Food' && c.parentId == null,
+        (c) => c.tempId == 'exp_food' && c.parentId == null,
       );
       final children = defaultCategories
           .where((c) => c.parentId == food.tempId)

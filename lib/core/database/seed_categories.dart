@@ -52,7 +52,7 @@ final List<SeedCategory> defaultCategories = [
   // ── Expense parents ──
   SeedCategory(
     tempId: _expFood,
-    name: 'Food',
+    name: '飲食',
     type: CategoryType.expense,
     iconEmoji: '\u{1F354}',
     colorHex: '#FF6B35',
@@ -60,7 +60,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expTransport,
-    name: 'Transport',
+    name: '交通',
     type: CategoryType.expense,
     iconEmoji: '\u{1F697}',
     colorHex: '#4ECDC4',
@@ -68,7 +68,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expEntertainment,
-    name: 'Entertainment',
+    name: '娛樂',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3AE}',
     colorHex: '#9B59B6',
@@ -76,7 +76,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expShopping,
-    name: 'Shopping',
+    name: '購物',
     type: CategoryType.expense,
     iconEmoji: '\u{1F6D2}',
     colorHex: '#E74C3C',
@@ -84,7 +84,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expHousing,
-    name: 'Housing',
+    name: '居住',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3E0}',
     colorHex: '#3498DB',
@@ -92,7 +92,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expMedical,
-    name: 'Medical',
+    name: '醫療',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3E5}',
     colorHex: '#E91E63',
@@ -100,7 +100,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expEducation,
-    name: 'Education',
+    name: '教育',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4DA}',
     colorHex: '#FF9800',
@@ -108,7 +108,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expInvestment,
-    name: 'Investment',
+    name: '投資',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4C8}',
     colorHex: '#2E5090',
@@ -116,7 +116,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _expOther,
-    name: 'Other',
+    name: '其他',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4E6}',
     colorHex: '#95A5A6',
@@ -126,7 +126,7 @@ final List<SeedCategory> defaultCategories = [
   // ── Income parents ──
   SeedCategory(
     tempId: _incSalary,
-    name: 'Salary',
+    name: '薪資',
     type: CategoryType.income,
     iconEmoji: '\u{1F4B0}',
     colorHex: '#2ECC71',
@@ -134,7 +134,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _incBonus,
-    name: 'Bonus',
+    name: '獎金',
     type: CategoryType.income,
     iconEmoji: '\u{1F381}',
     colorHex: '#F1C40F',
@@ -142,7 +142,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _incInvestment,
-    name: 'Investment Returns',
+    name: '投資收益',
     type: CategoryType.income,
     iconEmoji: '\u{1F4CA}',
     colorHex: '#1ABC9C',
@@ -150,7 +150,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _incSideJob,
-    name: 'Side Job',
+    name: '兼職',
     type: CategoryType.income,
     iconEmoji: '\u{1F4BC}',
     colorHex: '#3498DB',
@@ -158,7 +158,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: _incOther,
-    name: 'Other',
+    name: '其他',
     type: CategoryType.income,
     iconEmoji: '\u{1F4B5}',
     colorHex: '#95A5A6',
@@ -170,7 +170,7 @@ final List<SeedCategory> defaultCategories = [
   // Food children
   SeedCategory(
     tempId: 'sub_groceries',
-    name: 'Groceries',
+    name: '食材雜貨',
     type: CategoryType.expense,
     iconEmoji: '\u{1F96C}',
     colorHex: '#FF6B35',
@@ -179,7 +179,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_dining',
-    name: 'Dining Out',
+    name: '外食',
     type: CategoryType.expense,
     iconEmoji: '\u{1F37D}\u{FE0F}',
     colorHex: '#FF6B35',
@@ -188,7 +188,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_coffee',
-    name: 'Coffee & Drinks',
+    name: '咖啡飲料',
     type: CategoryType.expense,
     iconEmoji: '\u{2615}',
     colorHex: '#FF6B35',
@@ -197,7 +197,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_breakfast',
-    name: 'Breakfast',
+    name: '早餐',
     type: CategoryType.expense,
     iconEmoji: '\u{1F950}',
     colorHex: '#FF6B35',
@@ -206,7 +206,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_lunch',
-    name: 'Lunch',
+    name: '午餐',
     type: CategoryType.expense,
     iconEmoji: '\u{1F35C}',
     colorHex: '#FF6B35',
@@ -215,7 +215,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_dinner',
-    name: 'Dinner',
+    name: '晚餐',
     type: CategoryType.expense,
     iconEmoji: '\u{1F35B}',
     colorHex: '#FF6B35',
@@ -224,7 +224,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_snacks',
-    name: 'Snacks',
+    name: '零食',
     type: CategoryType.expense,
     iconEmoji: '\u{1F36B}',
     colorHex: '#FF6B35',
@@ -235,7 +235,7 @@ final List<SeedCategory> defaultCategories = [
   // Transport children
   SeedCategory(
     tempId: 'sub_transit',
-    name: 'Public Transit',
+    name: '大眾運輸',
     type: CategoryType.expense,
     iconEmoji: '\u{1F68C}',
     colorHex: '#4ECDC4',
@@ -244,7 +244,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_gas',
-    name: 'Gas',
+    name: '加油',
     type: CategoryType.expense,
     iconEmoji: '\u{26FD}',
     colorHex: '#4ECDC4',
@@ -253,7 +253,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_taxi',
-    name: 'Taxi & Ride Share',
+    name: '計程車',
     type: CategoryType.expense,
     iconEmoji: '\u{1F695}',
     colorHex: '#4ECDC4',
@@ -262,7 +262,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_parking',
-    name: 'Parking',
+    name: '停車',
     type: CategoryType.expense,
     iconEmoji: '\u{1F17F}\u{FE0F}',
     colorHex: '#4ECDC4',
@@ -273,7 +273,7 @@ final List<SeedCategory> defaultCategories = [
   // Entertainment children
   SeedCategory(
     tempId: 'sub_movies',
-    name: 'Movies',
+    name: '電影',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3AC}',
     colorHex: '#9B59B6',
@@ -282,7 +282,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_subs',
-    name: 'Subscriptions',
+    name: '訂閱服務',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4FA}',
     colorHex: '#9B59B6',
@@ -291,7 +291,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_games',
-    name: 'Games',
+    name: '遊戲',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3AE}',
     colorHex: '#9B59B6',
@@ -302,7 +302,7 @@ final List<SeedCategory> defaultCategories = [
   // Shopping children
   SeedCategory(
     tempId: 'sub_clothing',
-    name: 'Clothing',
+    name: '服飾',
     type: CategoryType.expense,
     iconEmoji: '\u{1F455}',
     colorHex: '#E74C3C',
@@ -311,7 +311,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_electronics',
-    name: 'Electronics',
+    name: '3C 電子',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4F1}',
     colorHex: '#E74C3C',
@@ -320,7 +320,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_household',
-    name: 'Household',
+    name: '日用品',
     type: CategoryType.expense,
     iconEmoji: '\u{1F9F4}',
     colorHex: '#E74C3C',
@@ -331,7 +331,7 @@ final List<SeedCategory> defaultCategories = [
   // Housing children
   SeedCategory(
     tempId: 'sub_rent',
-    name: 'Rent',
+    name: '房租',
     type: CategoryType.expense,
     iconEmoji: '\u{1F3E2}',
     colorHex: '#3498DB',
@@ -340,7 +340,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_utilities',
-    name: 'Utilities',
+    name: '水電瓦斯',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4A1}',
     colorHex: '#3498DB',
@@ -349,7 +349,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_internet',
-    name: 'Internet & Phone',
+    name: '網路電話',
     type: CategoryType.expense,
     iconEmoji: '\u{1F4F6}',
     colorHex: '#3498DB',
@@ -360,7 +360,7 @@ final List<SeedCategory> defaultCategories = [
   // Medical children
   SeedCategory(
     tempId: 'sub_doctor',
-    name: 'Doctor',
+    name: '看診',
     type: CategoryType.expense,
     iconEmoji: '\u{1FA7A}',
     colorHex: '#E91E63',
@@ -369,7 +369,7 @@ final List<SeedCategory> defaultCategories = [
   ),
   SeedCategory(
     tempId: 'sub_pharmacy',
-    name: 'Pharmacy',
+    name: '藥品',
     type: CategoryType.expense,
     iconEmoji: '\u{1F48A}',
     colorHex: '#E91E63',
