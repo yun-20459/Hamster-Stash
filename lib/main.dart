@@ -8,6 +8,8 @@ import 'package:hamster_stash/features/accounts/presentation/account_providers.d
 import 'package:hamster_stash/features/categories/data/isar_category_repository.dart';
 import 'package:hamster_stash/features/categories/presentation/category_providers.dart';
 import 'package:hamster_stash/features/exchange_rate/data/frankfurter_exchange_rate_service.dart';
+import 'package:hamster_stash/features/receivable_payable/data/isar_rp_repository.dart';
+import 'package:hamster_stash/features/receivable_payable/presentation/rp_providers.dart';
 import 'package:hamster_stash/features/exchange_rate/data/isar_exchange_rate_repository.dart';
 import 'package:hamster_stash/features/exchange_rate/presentation/exchange_rate_providers.dart';
 import 'package:hamster_stash/features/transactions/data/isar_transaction_repository.dart';
@@ -30,6 +32,7 @@ Future<void> main() async {
         categoryRepositoryProvider.overrideWithValue(
           IsarCategoryRepository(isar),
         ),
+        rpRepositoryProvider.overrideWithValue(IsarRPRepository(isar)),
         exchangeRateRepositoryProvider.overrideWithValue(
           IsarExchangeRateRepository(isar),
         ),
