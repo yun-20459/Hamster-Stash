@@ -1,9 +1,25 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hamster_stash/core/database/collections/transaction.dart';
+import 'package:hamster_stash/core/database/enums.dart';
+import 'package:hamster_stash/features/categories/presentation/category_providers.dart';
+import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 
-/// Mock category spending data for the pie chart.
+/// Provider that fetches current month's expense transactions
+/// grouped by category.
+final _monthlyExpensesProvider = FutureProvider<List<Transaction>>((ref) async {
+  final repo = ref.watch(transactionRepositoryProvider);
+  final now = DateTime.now();
+  final start = DateTime(now.year, now.month);
+  final end = DateTime(now.year, now.month + 1);
+  final all = await repo.getByDateRange(start, end);
+  return all.where((t) => t.type == TransactionType.expense).toList();
+});
+
+/// Aggregated spending data per category.
 class _CategorySpending {
-  const _CategorySpending({
+  _CategorySpending({
     required this.name,
     required this.emoji,
     required this.amount,
@@ -16,98 +32,140 @@ class _CategorySpending {
   final Color color;
 }
 
-const _mockSpending = [
-  _CategorySpending(
-    name: '飲食',
-    emoji: '\u{1F35C}',
-    amount: 8500,
-    color: Color(0xFFE74C3C),
-  ),
-  _CategorySpending(
-    name: '交通',
-    emoji: '\u{1F68B}',
-    amount: 3200,
-    color: Color(0xFF3498DB),
-  ),
-  _CategorySpending(
-    name: '購物',
-    emoji: '\u{1F6D2}',
-    amount: 2800,
-    color: Color(0xFFF39C12),
-  ),
-  _CategorySpending(
-    name: '娛樂',
-    emoji: '\u{1F3AE}',
-    amount: 1500,
-    color: Color(0xFF9B59B6),
-  ),
-  _CategorySpending(
-    name: '日用品',
-    emoji: '\u{1F9F4}',
-    amount: 900,
-    color: Color(0xFF1ABC9C),
-  ),
-];
-
-double get _totalSpending => _mockSpending.fold(0, (s, c) => s + c.amount);
-
-class ReportsScreen extends StatelessWidget {
+class ReportsScreen extends ConsumerWidget {
   const ReportsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final expensesAsync = ref.watch(_monthlyExpensesProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('報表')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Pie chart
-          SizedBox(
-            height: 220,
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: 40,
-                sections: _mockSpending.map((c) {
-                  final pct = c.amount / _totalSpending * 100;
-                  return PieChartSectionData(
-                    value: c.amount,
-                    color: c.color,
-                    radius: 50,
-                    title: '${pct.toStringAsFixed(0)}%',
-                    titleStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Category detail list
-          Text('分類明細', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          for (final c in _mockSpending) _CategoryRow(category: c),
-        ],
+      body: expensesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+        data: (expenses) {
+          if (expenses.isEmpty) {
+            return const Center(child: Text('本月沒有支出紀錄'));
+          }
+          return _ReportsBody(expenses: expenses);
+        },
       ),
     );
   }
 }
 
-class _CategoryRow extends StatelessWidget {
-  const _CategoryRow({required this.category});
+class _ReportsBody extends ConsumerStatefulWidget {
+  const _ReportsBody({required this.expenses});
 
-  final _CategorySpending category;
+  final List<Transaction> expenses;
+
+  @override
+  ConsumerState<_ReportsBody> createState() => _ReportsBodyState();
+}
+
+class _ReportsBodyState extends ConsumerState<_ReportsBody> {
+  List<_CategorySpending>? _spending;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final catRepo = ref.read(categoryRepositoryProvider);
+
+    // Group by categoryId
+    final grouped = <int, double>{};
+    for (final txn in widget.expenses) {
+      final catId = txn.categoryId ?? 0;
+      grouped[catId] = (grouped[catId] ?? 0) + txn.amount;
+    }
+
+    // Resolve category names
+    final result = <_CategorySpending>[];
+    for (final entry in grouped.entries) {
+      final cat = await catRepo.getById(entry.key);
+      result.add(
+        _CategorySpending(
+          name: cat?.name ?? 'Other',
+          emoji: cat?.iconEmoji ?? '\u{1F4E6}',
+          amount: entry.value,
+          color: _parseColor(cat?.colorHex),
+        ),
+      );
+    }
+
+    // Sort by amount descending
+    result.sort((a, b) => b.amount.compareTo(a.amount));
+
+    if (mounted) setState(() => _spending = result);
+  }
+
+  Color _parseColor(String? hex) {
+    if (hex == null || hex.length < 7) return const Color(0xFF95A5A6);
+    final value = int.tryParse(hex.substring(1), radix: 16);
+    if (value == null) return const Color(0xFF95A5A6);
+    return Color(0xFF000000 | value);
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final pct = category.amount / _totalSpending * 100;
+
+    if (_spending == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final spending = _spending!;
+    final total = spending.fold<double>(0, (s, c) => s + c.amount);
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        SizedBox(
+          height: 220,
+          child: PieChart(
+            PieChartData(
+              sectionsSpace: 2,
+              centerSpaceRadius: 40,
+              sections: spending.map((c) {
+                final pct = c.amount / total * 100;
+                return PieChartSectionData(
+                  value: c.amount,
+                  color: c.color,
+                  radius: 50,
+                  title: '${pct.toStringAsFixed(0)}%',
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text('分類明細', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 8),
+        for (final c in spending) _CategoryRow(category: c, total: total),
+      ],
+    );
+  }
+}
+
+class _CategoryRow extends StatelessWidget {
+  const _CategoryRow({required this.category, required this.total});
+
+  final _CategorySpending category;
+  final double total;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final pct = category.amount / total * 100;
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -117,7 +175,7 @@ class _CategoryRow extends StatelessWidget {
       ),
       title: Text(category.name, style: theme.textTheme.bodyMedium),
       subtitle: LinearProgressIndicator(
-        value: category.amount / _totalSpending,
+        value: category.amount / total,
         color: category.color,
         backgroundColor: category.color.withValues(alpha: 0.1),
       ),
