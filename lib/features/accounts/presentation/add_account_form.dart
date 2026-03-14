@@ -31,81 +31,83 @@ class _AddAccountFormState extends ConsumerState<AddAccountForm> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Form(
-      key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text('新增帳戶', style: theme.textTheme.titleLarge),
-          const SizedBox(height: 16),
-
-          // Name
-          TextFormField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: '帳戶名稱',
-              border: OutlineInputBorder(),
+    return Scaffold(
+      appBar: AppBar(title: const Text('新增帳戶')),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Name
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: '帳戶名稱',
+                border: OutlineInputBorder(),
+              ),
+              validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? '請輸入帳戶名稱' : null,
             ),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? '請輸入帳戶名稱' : null,
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Account type
-          Text('帳戶類型', style: theme.textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: AccountType.values.map((t) {
-              final selected = t == _type;
-              return ChoiceChip(
-                label: Text(_accountTypeLabel(t)),
-                selected: selected,
-                onSelected: (_) => setState(() => _type = t),
-                selectedColor: AppColors.primaryLight,
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12),
-
-          // Currency
-          DropdownButtonFormField<String>(
-            initialValue: _currency,
-            decoration: const InputDecoration(
-              labelText: '幣別',
-              border: OutlineInputBorder(),
+            // Account type
+            Text('帳戶類型', style: theme.textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: AccountType.values.map((t) {
+                final selected = t == _type;
+                return ChoiceChip(
+                  label: Text(_accountTypeLabel(t)),
+                  selected: selected,
+                  onSelected: (_) => setState(() => _type = t),
+                  selectedColor: AppColors.primaryLight,
+                );
+              }).toList(),
             ),
-            items: const [
-              DropdownMenuItem(value: 'TWD', child: Text('TWD')),
-              DropdownMenuItem(value: 'USD', child: Text('USD')),
-              DropdownMenuItem(value: 'JPY', child: Text('JPY')),
-              DropdownMenuItem(value: 'EUR', child: Text('EUR')),
-            ],
-            onChanged: (v) => setState(() => _currency = v ?? 'TWD'),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Balance
-          TextFormField(
-            controller: _balanceController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: '初始餘額',
-              border: OutlineInputBorder(),
+            // Currency
+            DropdownButtonFormField<String>(
+              initialValue: _currency,
+              decoration: const InputDecoration(
+                labelText: '幣別',
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'TWD', child: Text('TWD')),
+                DropdownMenuItem(value: 'USD', child: Text('USD')),
+                DropdownMenuItem(value: 'JPY', child: Text('JPY')),
+                DropdownMenuItem(value: 'EUR', child: Text('EUR')),
+              ],
+              onChanged: (v) => setState(() => _currency = v ?? 'TWD'),
             ),
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
-          // Save
-          FilledButton(
-            onPressed: _save,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text('儲存'),
+            // Balance
+            TextFormField(
+              controller: _balanceController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: '初始餘額',
+                border: OutlineInputBorder(),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+
+            // Save
+            FilledButton(
+              onPressed: _save,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text('儲存'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

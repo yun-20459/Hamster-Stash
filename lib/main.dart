@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hamster_stash/app.dart';
 import 'package:hamster_stash/core/database/database_helper.dart';
+import 'package:hamster_stash/core/database/seed_categories.dart';
 import 'package:hamster_stash/features/accounts/data/isar_account_repository.dart';
 import 'package:hamster_stash/features/accounts/presentation/account_providers.dart';
 import 'package:hamster_stash/features/categories/data/isar_category_repository.dart';
@@ -12,6 +13,7 @@ import 'package:hamster_stash/features/transactions/presentation/transaction_pro
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final isar = await DatabaseHelper.instance;
+  await seedCategories(isar);
 
   runApp(
     ProviderScope(

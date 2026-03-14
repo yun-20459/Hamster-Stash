@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hamster_stash/core/database/collections/account.dart';
 import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
@@ -16,6 +17,13 @@ class OverviewScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('總覽')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await context.push('/add-account');
+          ref.invalidate(activeAccountsProvider);
+        },
+        child: const Icon(Icons.add),
+      ),
       body: accountsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),

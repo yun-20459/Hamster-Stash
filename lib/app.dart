@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hamster_stash/core/theme/app_theme.dart';
+import 'package:hamster_stash/features/accounts/presentation/add_account_form.dart';
 import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
 import 'package:hamster_stash/features/reports/presentation/reports_screen.dart';
 import 'package:hamster_stash/features/settings/presentation/settings_screen.dart';
@@ -11,6 +12,10 @@ final _router = GoRouter(
   initialLocation: '/splash',
   routes: [
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+    GoRoute(
+      path: '/add-account',
+      builder: (context, state) => const AddAccountForm(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScaffoldWithNavBar(navigationShell: navigationShell);
