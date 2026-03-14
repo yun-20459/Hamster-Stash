@@ -1,157 +1,106 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hamster_stash/core/database/collections/account.dart';
+import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
+import 'package:hamster_stash/core/widgets/empty_state.dart';
+import 'package:hamster_stash/features/accounts/presentation/account_providers.dart';
 import 'package:hamster_stash/features/transactions/presentation/recent_transactions_widget.dart';
 
-// ---------------------------------------------------------------------------
-// Mock data — will be replaced with Riverpod providers in Phase 3
-// ---------------------------------------------------------------------------
-
-class _MockAccount {
-  const _MockAccount({
-    required this.name,
-    required this.emoji,
-    required this.balance,
-    required this.currency,
-    required this.isCurrent,
-  });
-
-  final String name;
-  final String emoji;
-  final double balance;
-  final String currency;
-  final bool isCurrent;
-}
-
-const _mockAccounts = [
-  _MockAccount(
-    name: '國泰世華',
-    emoji: '\u{1F3E6}',
-    balance: 125000,
-    currency: 'TWD',
-    isCurrent: true,
-  ),
-  _MockAccount(
-    name: 'Firstrade',
-    emoji: '\u{1F4C8}',
-    balance: 8520.50,
-    currency: 'USD',
-    isCurrent: true,
-  ),
-  _MockAccount(
-    name: '現金',
-    emoji: '\u{1F4B5}',
-    balance: 3200,
-    currency: 'TWD',
-    isCurrent: true,
-  ),
-  _MockAccount(
-    name: '不動產',
-    emoji: '\u{1F3E0}',
-    balance: 8500000,
-    currency: 'TWD',
-    isCurrent: false,
-  ),
-];
-
-// Using a simplified mock exchange rate for display
-const _mockUsdToTwd = 31.5;
-
-double get _totalCurrentTwd {
-  var total = 0.0;
-  for (final a in _mockAccounts) {
-    if (!a.isCurrent) continue;
-    total += a.currency == 'USD' ? a.balance * _mockUsdToTwd : a.balance;
-  }
-  return total;
-}
-
-double get _totalNonCurrentTwd {
-  var total = 0.0;
-  for (final a in _mockAccounts) {
-    if (a.isCurrent) continue;
-    total += a.currency == 'USD' ? a.balance * _mockUsdToTwd : a.balance;
-  }
-  return total;
-}
-
-double get _totalAssetsTwd => _totalCurrentTwd + _totalNonCurrentTwd;
-
-// Mock liabilities (credit card + payables)
-const _mockLiabilities = 12000.0;
-double get _netWorthTwd => _totalAssetsTwd - _mockLiabilities;
-
-// ---------------------------------------------------------------------------
-// Screen
-// ---------------------------------------------------------------------------
-
-class OverviewScreen extends StatelessWidget {
+class OverviewScreen extends ConsumerWidget {
   const OverviewScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accountsAsync = ref.watch(activeAccountsProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('總覽')),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        children: [
-          // Total assets hero card
-          _TotalAssetCard(totalTwd: _totalAssetsTwd),
-          const SizedBox(height: 12),
-
-          // Summary row: current / non-current / net worth
-          Row(
-            children: [
-              Expanded(
-                child: _SummaryCard(
-                  label: '短期資產',
-                  amount: _totalCurrentTwd,
-                  color: AppColors.income,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _SummaryCard(
-                  label: '長期資產',
-                  amount: _totalNonCurrentTwd,
-                  color: AppColors.secondary,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _SummaryCard(
-                  label: '淨資產',
-                  amount: _netWorthTwd,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Account list header
-          Text('帳戶', style: theme.textTheme.titleLarge),
-          const SizedBox(height: 8),
-
-          // Account cards
-          for (final account in _mockAccounts) ...[
-            _AccountCard(account: account),
-            const SizedBox(height: 8),
-          ],
-
-          const SizedBox(height: 12),
-          const RecentTransactionsWidget(),
-        ],
+      body: accountsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+        data: (accounts) {
+          if (accounts.isEmpty) {
+            return const EmptyState(type: EmptyStateType.accounts);
+          }
+          return _OverviewBody(accounts: accounts);
+        },
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// Widgets
-// ---------------------------------------------------------------------------
+class _OverviewBody extends StatelessWidget {
+  const _OverviewBody({required this.accounts});
+
+  final List<Account> accounts;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final currentTotal =
+        _sumByTerm(AssetTerm.current) + _sumByTerm(AssetTerm.shortTerm);
+    final longTermTotal = _sumByTerm(AssetTerm.longTerm);
+    final totalAssets = currentTotal + longTermTotal;
+
+    // Liabilities: credit card balances (negative = owed)
+    final liabilities = accounts
+        .where((a) => a.type == AccountType.creditCard && a.balance < 0)
+        .fold<double>(0, (sum, a) => sum + a.balance.abs());
+    final netWorth = totalAssets - liabilities;
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      children: [
+        _TotalAssetCard(totalTwd: totalAssets),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _SummaryCard(
+                label: '短期資產',
+                amount: currentTotal,
+                color: AppColors.income,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _SummaryCard(
+                label: '長期資產',
+                amount: longTermTotal,
+                color: AppColors.secondary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _SummaryCard(
+                label: '淨資產',
+                amount: netWorth,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Text('帳戶', style: theme.textTheme.titleLarge),
+        const SizedBox(height: 8),
+        for (final account in accounts) ...[
+          _AccountCard(account: account),
+          const SizedBox(height: 8),
+        ],
+        const SizedBox(height: 12),
+        const RecentTransactionsWidget(),
+      ],
+    );
+  }
+
+  double _sumByTerm(AssetTerm term) {
+    return accounts
+        .where((a) => a.assetTerm == term && a.balance > 0)
+        .fold<double>(0, (sum, a) => sum + a.balance);
+  }
+}
 
 class _TotalAssetCard extends StatelessWidget {
   const _TotalAssetCard({required this.totalTwd});
@@ -236,29 +185,36 @@ class _SummaryCard extends StatelessWidget {
 class _AccountCard extends StatelessWidget {
   const _AccountCard({required this.account});
 
-  final _MockAccount account;
+  final Account account;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tag = account.isCurrent ? '短期' : '長期';
+    final isCurrent =
+        account.assetTerm == AssetTerm.current ||
+        account.assetTerm == AssetTerm.shortTerm;
+    final tag = isCurrent ? '短期' : '長期';
+    final currency = account.currency ?? 'TWD';
 
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: CircleAvatar(
           backgroundColor: AppColors.primaryLight,
-          child: Text(account.emoji, style: const TextStyle(fontSize: 22)),
+          child: Text(
+            account.iconEmoji ?? _defaultEmoji(account.type),
+            style: const TextStyle(fontSize: 22),
+          ),
         ),
         title: Text(account.name, style: theme.textTheme.bodyMedium),
         subtitle: Text(
           tag,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: account.isCurrent ? AppColors.income : AppColors.secondary,
+            color: isCurrent ? AppColors.income : AppColors.secondary,
           ),
         ),
         trailing: Text(
-          '${account.currency == "USD" ? r"$" : r"NT$"} '
+          '${currency == "USD" ? r"$" : r"NT$"} '
           '${_formatAmount(account.balance)}',
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
@@ -267,14 +223,26 @@ class _AccountCard extends StatelessWidget {
       ),
     );
   }
+
+  String _defaultEmoji(AccountType type) {
+    switch (type) {
+      case AccountType.cash:
+        return '\u{1F4B5}';
+      case AccountType.bank:
+        return '\u{1F3E6}';
+      case AccountType.creditCard:
+        return '\u{1F4B3}';
+      case AccountType.eWallet:
+        return '\u{1F4F1}';
+      case AccountType.investment:
+        return '\u{1F4C8}';
+      case AccountType.other:
+        return '\u{1F4E6}';
+    }
+  }
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 String _formatAmount(double value) {
-  // Simple thousands separator
   final parts = value
       .toStringAsFixed(value.truncateToDouble() == value ? 0 : 2)
       .split('.');
