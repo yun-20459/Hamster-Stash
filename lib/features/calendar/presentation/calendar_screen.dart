@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hamster_stash/core/database/collections/category.dart';
 import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
+import 'package:hamster_stash/features/categories/presentation/category_providers.dart';
 import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -13,6 +15,24 @@ final _monthTransactionsProvider =
       final start = DateTime(month.year, month.month);
       final end = DateTime(month.year, month.month + 1);
       return repo.getByDateRange(start, end);
+    });
+
+/// Looks up a category and its parent by ID.
+/// Returns (child, parent) or (category, null).
+final _categoryWithParentProvider =
+    FutureProvider.family<(Category?, Category?), int?>((
+      ref,
+      categoryId,
+    ) async {
+      if (categoryId == null) return (null, null);
+      final repo = ref.watch(categoryRepositoryProvider);
+      final cat = await repo.getById(categoryId);
+      if (cat == null) return (null, null);
+      if (cat.parentId != null) {
+        final parent = await repo.getById(cat.parentId!);
+        return (cat, parent);
+      }
+      return (cat, null);
     });
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -170,39 +190,53 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
 
     return Column(
-      children: [
-        for (final txn in transactions)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: CircleAvatar(
-              backgroundColor:
-                  (txn.type == TransactionType.income
-                          ? AppColors.income
-                          : AppColors.expense)
-                      .withValues(alpha: 0.15),
-              child: Icon(
-                txn.type == TransactionType.income
-                    ? Icons.arrow_downward
-                    : Icons.arrow_upward,
-                color: txn.type == TransactionType.income
-                    ? AppColors.income
-                    : AppColors.expense,
+      children: [for (final txn in transactions) _CalendarTxnTile(txn: txn)],
+    );
+  }
+}
+
+class _CalendarTxnTile extends ConsumerWidget {
+  const _CalendarTxnTile({required this.txn});
+
+  final Transaction txn;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catAsync = ref.watch(_categoryWithParentProvider(txn.categoryId));
+    final isIncome = txn.type == TransactionType.income;
+    final color = isIncome ? AppColors.income : AppColors.expense;
+
+    // Build category label: "parent > child" or "parent"
+    var catLabel = isIncome ? '收入' : '支出';
+    String? catEmoji;
+    catAsync.whenData((pair) {
+      final (child, parent) = pair;
+      if (parent != null && child != null) {
+        catLabel = '${parent.name} > ${child.name}';
+        catEmoji = child.iconEmoji;
+      } else if (child != null) {
+        catLabel = child.name;
+        catEmoji = child.iconEmoji;
+      }
+    });
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: CircleAvatar(
+        backgroundColor: color.withValues(alpha: 0.15),
+        child: catEmoji != null
+            ? Text(catEmoji!, style: const TextStyle(fontSize: 18))
+            : Icon(
+                isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+                color: color,
               ),
-            ),
-            title: Text(
-              txn.note ?? (txn.type == TransactionType.income ? '收入' : '支出'),
-            ),
-            trailing: Text(
-              'NT\$ ${txn.amount.toStringAsFixed(0)}',
-              style: TextStyle(
-                color: txn.type == TransactionType.income
-                    ? AppColors.income
-                    : AppColors.expense,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-      ],
+      ),
+      title: Text(catLabel),
+      subtitle: txn.note != null ? Text(txn.note!) : null,
+      trailing: Text(
+        'NT\$ ${txn.amount.toStringAsFixed(0)}',
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
