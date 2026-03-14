@@ -23,6 +23,16 @@ class Transaction {
 
   int? toAccountId;
 
+  /// Transaction currency (e.g. "USD", "TWD").
+  String? currency;
+
+  /// Exchange rate used for this transaction.
+  /// 1 [currency] = [exchangeRate] base currency.
+  double exchangeRate = 1;
+
+  /// Whether the exchange rate was manually set by the user.
+  bool isManualRate = false;
+
   String? note;
 
   String? attachmentPath;
