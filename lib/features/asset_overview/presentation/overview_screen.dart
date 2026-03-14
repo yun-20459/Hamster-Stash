@@ -18,6 +18,7 @@ class OverviewScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('總覽')),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'overview_fab',
         onPressed: () async {
           await context.push('/add-account');
           ref.invalidate(activeAccountsProvider);

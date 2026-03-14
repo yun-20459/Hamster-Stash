@@ -29,6 +29,7 @@ class BookkeepingScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.large(
+        heroTag: 'bookkeeping_fab',
         onPressed: () => _showAddTransactionSheet(context),
         child: const Icon(Icons.add, size: 36),
       ),
