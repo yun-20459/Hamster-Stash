@@ -31,6 +31,12 @@ class SettingsScreen extends StatelessWidget {
             onTap: () => context.push('/add-account'),
           ),
           _SettingsTile(
+            icon: Icons.pie_chart,
+            title: '預算管理',
+            subtitle: '設定與追蹤預算',
+            onTap: () => context.push('/budget-management'),
+          ),
+          _SettingsTile(
             icon: Icons.repeat,
             title: '週期性交易',
             subtitle: '管理自動記帳規則',
