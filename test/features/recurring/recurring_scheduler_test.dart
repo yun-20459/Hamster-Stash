@@ -38,10 +38,8 @@ void main() {
         'then generates one transaction', () {
       final now = DateTime(2026, 3, 1);
       final rule = _makeRule(
-        startDate: DateTime(2026, 1, 1),
         nextExecutionAt: DateTime(2026, 3, 1),
         amount: 500,
-        type: TransactionType.expense,
         categoryId: 3,
         accountId: 7,
         note: '房租',
@@ -63,11 +61,7 @@ void main() {
     test('given rule with nextExecution in the past, '
         'then generates multiple catch-up transactions', () {
       final now = DateTime(2026, 4, 15);
-      final rule = _makeRule(
-        frequency: RecurringFrequency.monthly,
-        startDate: DateTime(2026, 1, 1),
-        nextExecutionAt: DateTime(2026, 2, 1),
-      );
+      final rule = _makeRule(nextExecutionAt: DateTime(2026, 2, 1));
 
       final result = computeDueTransactions(rule, now);
 
@@ -91,8 +85,6 @@ void main() {
         'then stops generating and deactivates', () {
       final now = DateTime(2026, 5, 1);
       final rule = _makeRule(
-        frequency: RecurringFrequency.monthly,
-        startDate: DateTime(2026, 1, 1),
         nextExecutionAt: DateTime(2026, 3, 1),
         endDate: DateTime(2026, 4, 1),
       );

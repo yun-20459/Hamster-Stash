@@ -30,7 +30,6 @@ void main() {
               ..note = '房租'
               ..startDate = DateTime(2026, 1, 1)
               ..nextExecutionAt = DateTime(2026, 4, 1)
-              ..isActive = true
               ..createdAt = DateTime(2026),
           ],
     );

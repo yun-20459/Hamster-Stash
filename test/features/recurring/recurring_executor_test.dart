@@ -62,7 +62,7 @@ void main() {
 
   test('given one due rule, '
       'then creates transaction and updates rule', () async {
-    final rule = _makeRule(nextExecutionAt: DateTime(2026, 3, 1));
+    final rule = _makeRule();
     when(() => mockRecurringRepo.getActive()).thenAnswer((_) async => [rule]);
     when(() => mockTxnRepo.add(any())).thenAnswer((_) async => 1);
     when(() => mockRecurringRepo.update(any())).thenAnswer((_) async {});
@@ -98,10 +98,7 @@ void main() {
 
   test('given rule past endDate, '
       'then deactivates rule', () async {
-    final rule = _makeRule(
-      nextExecutionAt: DateTime(2026, 3, 1),
-      endDate: DateTime(2026, 3, 15),
-    );
+    final rule = _makeRule(endDate: DateTime(2026, 3, 15));
     when(() => mockRecurringRepo.getActive()).thenAnswer((_) async => [rule]);
     when(() => mockTxnRepo.add(any())).thenAnswer((_) async => 1);
     when(() => mockRecurringRepo.update(any())).thenAnswer((_) async {});
@@ -117,8 +114,8 @@ void main() {
 
   test('given multiple rules, '
       'then processes all of them', () async {
-    final rule1 = _makeRule(id: 1, nextExecutionAt: DateTime(2026, 3, 1));
-    final rule2 = _makeRule(id: 2, nextExecutionAt: DateTime(2026, 3, 1));
+    final rule1 = _makeRule();
+    final rule2 = _makeRule(id: 2);
     when(
       () => mockRecurringRepo.getActive(),
     ).thenAnswer((_) async => [rule1, rule2]);
