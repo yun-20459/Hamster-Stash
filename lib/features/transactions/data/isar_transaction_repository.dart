@@ -35,10 +35,11 @@ class IsarTransactionRepository implements TransactionRepository {
   }
 
   @override
-  Future<List<Transaction>> getRecent({int limit = 30}) async {
+  Future<List<Transaction>> getRecent({int limit = 30, int offset = 0}) async {
     return _isar.transactions
         .where()
         .sortByDateTimeDesc()
+        .offset(offset)
         .limit(limit)
         .findAll();
   }

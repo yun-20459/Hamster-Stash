@@ -5,7 +5,7 @@ abstract class TransactionRepository {
   Future<List<Transaction>> getByDateRange(DateTime start, DateTime end);
   Future<List<Transaction>> getByAccountId(int accountId);
   Future<List<Transaction>> getByCategoryId(int categoryId);
-  Future<List<Transaction>> getRecent({int limit = 30});
+  Future<List<Transaction>> getRecent({int limit = 30, int offset = 0});
   Future<Transaction?> getById(int id);
   Future<int> add(Transaction transaction);
   Future<void> update(Transaction transaction);
