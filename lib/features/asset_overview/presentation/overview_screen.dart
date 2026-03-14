@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hamster_stash/core/theme/app_colors.dart';
+import 'package:hamster_stash/features/transactions/presentation/recent_transactions_widget.dart';
 
 // ---------------------------------------------------------------------------
 // Mock data — will be replaced with Riverpod providers in Phase 3
@@ -139,6 +140,9 @@ class OverviewScreen extends StatelessWidget {
             _AccountCard(account: account),
             const SizedBox(height: 8),
           ],
+
+          const SizedBox(height: 12),
+          const RecentTransactionsWidget(),
         ],
       ),
     );
