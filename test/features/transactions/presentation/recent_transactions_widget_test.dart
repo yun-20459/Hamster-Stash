@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hamster_stash/core/database/collections/category.dart';
 import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:hamster_stash/core/database/enums.dart';
+import 'package:hamster_stash/features/categories/domain/category_repository.dart';
+import 'package:hamster_stash/features/categories/presentation/category_providers.dart';
 import 'package:hamster_stash/features/transactions/domain/transaction_repository.dart';
 import 'package:hamster_stash/features/transactions/presentation/recent_transactions_widget.dart';
 import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
@@ -10,16 +13,20 @@ import 'package:mocktail/mocktail.dart';
 
 class MockTransactionRepository extends Mock implements TransactionRepository {}
 
+class MockCategoryRepository extends Mock implements CategoryRepository {}
+
 Transaction _makeTxn({
   int id = 1,
   double amount = 100,
   TransactionType type = TransactionType.expense,
   String? note,
+  int? categoryId,
 }) {
   return Transaction()
     ..id = id
     ..amount = amount
     ..type = type
+    ..categoryId = categoryId
     ..dateTime = DateTime(2026, 3, 13)
     ..note = note
     ..createdAt = DateTime(2026);
@@ -27,9 +34,31 @@ Transaction _makeTxn({
 
 void main() {
   late MockTransactionRepository mockRepo;
+  late MockCategoryRepository mockCatRepo;
 
   setUp(() {
     mockRepo = MockTransactionRepository();
+    mockCatRepo = MockCategoryRepository();
+    // Stub category lookup: child with parent
+    when(() => mockCatRepo.getById(10)).thenAnswer(
+      (_) async => Category()
+        ..id = 10
+        ..name = '午餐'
+        ..type = CategoryType.expense
+        ..parentId = 1
+        ..sortOrder = 4
+        ..isDefault = true
+        ..createdAt = DateTime(2026),
+    );
+    when(() => mockCatRepo.getById(1)).thenAnswer(
+      (_) async => Category()
+        ..id = 1
+        ..name = '飲食'
+        ..type = CategoryType.expense
+        ..sortOrder = 0
+        ..isDefault = true
+        ..createdAt = DateTime(2026),
+    );
   });
 
   Widget buildWidget({List<Transaction>? txns}) {
@@ -37,7 +66,7 @@ void main() {
       (_) async =>
           txns ??
           [
-            _makeTxn(note: 'Lunch'),
+            _makeTxn(note: 'Lunch', categoryId: 10),
             _makeTxn(
               note: 'Salary',
               type: TransactionType.income,
@@ -46,7 +75,10 @@ void main() {
           ],
     );
     return ProviderScope(
-      overrides: [transactionRepositoryProvider.overrideWithValue(mockRepo)],
+      overrides: [
+        transactionRepositoryProvider.overrideWithValue(mockRepo),
+        categoryRepositoryProvider.overrideWithValue(mockCatRepo),
+      ],
       child: const MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(child: RecentTransactionsWidget()),
@@ -99,6 +131,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('載入更多'), findsOneWidget);
+    });
+
+    testWidgets('given transaction with category, '
+        'then shows parent > child label', (tester) async {
+      await tester.pumpWidget(buildWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('飲食 > 午餐'), findsOneWidget);
     });
 
     testWidgets('given load more tapped, '
