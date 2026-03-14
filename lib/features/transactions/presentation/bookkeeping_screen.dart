@@ -5,8 +5,11 @@ import 'package:hamster_stash/core/database/collections/category.dart'
 import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
+import 'package:hamster_stash/core/utils/expression_evaluator.dart';
 import 'package:hamster_stash/features/accounts/presentation/account_providers.dart';
 import 'package:hamster_stash/features/categories/presentation/category_picker.dart';
+import 'package:hamster_stash/features/transactions/'
+    'presentation/number_keypad.dart';
 import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 
 class BookkeepingScreen extends StatelessWidget {
@@ -59,14 +62,13 @@ class _AddTransactionSheet extends ConsumerStatefulWidget {
 
 class _AddTransactionSheetState extends ConsumerState<_AddTransactionSheet> {
   int _selectedType = 0; // 0 = expense, 1 = income, 2 = transfer
-  final _amountController = TextEditingController();
+  String _expression = '';
   final _noteController = TextEditingController();
   cat_model.Category? _selectedCategory;
   int? _selectedAccountId;
 
   @override
   void dispose() {
-    _amountController.dispose();
     _noteController.dispose();
     super.dispose();
   }
@@ -84,117 +86,158 @@ class _AddTransactionSheetState extends ConsumerState<_AddTransactionSheet> {
           top: 16,
           bottom: MediaQuery.of(context).viewInsets.bottom + 16,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Drag handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text('新增記帳', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 16),
-
-            // Type toggle
-            SegmentedButton<int>(
-              segments: const [
-                ButtonSegment(value: 0, label: Text('支出')),
-                ButtonSegment(value: 1, label: Text('收入')),
-                ButtonSegment(value: 2, label: Text('轉帳')),
-              ],
-              selected: {_selectedType},
-              onSelectionChanged: (value) {
-                setState(() => _selectedType = value.first);
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Amount
-            TextField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: '金額',
-                prefixText: _selectedType == 2 ? '' : r'NT$ ',
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Category selector
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                backgroundColor: AppColors.primaryLight,
-                child: Text(
-                  _selectedCategory?.iconEmoji ?? '\u{1F4C1}',
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
-              title: Text(_selectedCategory?.name ?? '選擇分類'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _pickCategory(context),
-            ),
-
-            // Account selector
-            accountsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error: $e'),
-              data: (accounts) {
-                if (_selectedAccountId == null && accounts.isNotEmpty) {
-                  _selectedAccountId = accounts.first.id;
-                }
-                final selected = accounts.where(
-                  (a) => a.id == _selectedAccountId,
-                );
-                final name = selected.isNotEmpty ? selected.first.name : '選擇帳戶';
-
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const CircleAvatar(
-                    backgroundColor: AppColors.primaryLight,
-                    child: Icon(
-                      Icons.account_balance_wallet,
-                      color: AppColors.primary,
-                    ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.divider,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  title: Text(name),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
-                );
-              },
-            ),
-
-            // Note
-            TextField(
-              controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: '備註（選填）',
-                border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 16),
+              Text('新增記帳', style: theme.textTheme.titleLarge),
+              const SizedBox(height: 16),
 
-            // Save
-            FilledButton(
-              onPressed: _save,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text('儲存'),
+              // Type toggle
+              SegmentedButton<int>(
+                segments: const [
+                  ButtonSegment(value: 0, label: Text('支出')),
+                  ButtonSegment(value: 1, label: Text('收入')),
+                  ButtonSegment(value: 2, label: Text('轉帳')),
+                ],
+                selected: {_selectedType},
+                onSelectionChanged: (value) {
+                  setState(() => _selectedType = value.first);
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+
+              // Amount display
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.divider),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (_expression.isNotEmpty)
+                      Text(
+                        _expression,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    Text(
+                      _expression.isEmpty
+                          ? '0'
+                          : evaluateExpression(_expression).toStringAsFixed(0),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Number keypad
+              NumberKeypad(onInput: _onKeypadInput),
+              const SizedBox(height: 12),
+
+              // Category selector
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.primaryLight,
+                  child: Text(
+                    _selectedCategory?.iconEmoji ?? '\u{1F4C1}',
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
+                title: Text(_selectedCategory?.name ?? '選擇分類'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _pickCategory(context),
+              ),
+
+              // Account selector
+              accountsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Text('Error: $e'),
+                data: (accounts) {
+                  if (_selectedAccountId == null && accounts.isNotEmpty) {
+                    _selectedAccountId = accounts.first.id;
+                  }
+                  final selected = accounts.where(
+                    (a) => a.id == _selectedAccountId,
+                  );
+                  final name = selected.isNotEmpty
+                      ? selected.first.name
+                      : '選擇帳戶';
+
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.primaryLight,
+                      child: Icon(
+                        Icons.account_balance_wallet,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    title: Text(name),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {},
+                  );
+                },
+              ),
+
+              // Note
+              TextField(
+                controller: _noteController,
+                decoration: const InputDecoration(
+                  labelText: '備註（選填）',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Save
+              FilledButton(
+                onPressed: _save,
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text('儲存'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _onKeypadInput(String key) {
+    setState(() {
+      if (key == 'backspace') {
+        if (_expression.isNotEmpty) {
+          _expression = _expression.substring(0, _expression.length - 1);
+        }
+      } else {
+        _expression += key;
+      }
+    });
   }
 
   void _pickCategory(BuildContext context) {
@@ -218,7 +261,7 @@ class _AddTransactionSheetState extends ConsumerState<_AddTransactionSheet> {
   }
 
   Future<void> _save() async {
-    final amount = double.tryParse(_amountController.text) ?? 0;
+    final amount = evaluateExpression(_expression);
 
     final type = switch (_selectedType) {
       1 => TransactionType.income,
