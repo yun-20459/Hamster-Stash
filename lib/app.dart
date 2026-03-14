@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hamster_stash/core/theme/app_theme.dart';
 import 'package:hamster_stash/features/accounts/presentation/add_account_form.dart';
 import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
+import 'package:hamster_stash/features/budget/presentation/budget_screen.dart';
 import 'package:hamster_stash/features/calendar/presentation/calendar_screen.dart';
 import 'package:hamster_stash/features/categories/presentation/category_management.dart';
 import 'package:hamster_stash/features/reports/presentation/reports_screen.dart';
@@ -21,6 +22,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/category-management',
       builder: (context, state) => const CategoryManagement(),
+    ),
+    GoRoute(
+      path: '/budget-management',
+      builder: (context, state) => const BudgetScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
