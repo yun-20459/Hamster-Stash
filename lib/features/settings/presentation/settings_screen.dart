@@ -42,6 +42,12 @@ class SettingsScreen extends StatelessWidget {
             subtitle: '管理自動記帳規則',
             onTap: () {},
           ),
+          _SettingsTile(
+            icon: Icons.receipt_long,
+            title: '應收/應付',
+            subtitle: '管理借貸與分帳紀錄',
+            onTap: () => context.push('/receivable-payable'),
+          ),
           const Divider(),
 
           // Data section
