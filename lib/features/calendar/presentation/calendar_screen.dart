@@ -1,33 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hamster_stash/core/database/collections/transaction.dart';
+import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
+import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-/// Mock daily spending data for the calendar heatmap.
-final _mockDailySpending = <DateTime, double>{
-  DateTime(2026, 3): 350,
-  DateTime(2026, 3, 3): 1200,
-  DateTime(2026, 3, 5): 899,
-  DateTime(2026, 3, 8): 1280,
-  DateTime(2026, 3, 10): -45000, // income (negative = net)
-  DateTime(2026, 3, 13): 120,
-};
+/// Provider for monthly transactions.
+final _monthTransactionsProvider =
+    FutureProvider.family<List<Transaction>, DateTime>((ref, month) {
+      final repo = ref.watch(transactionRepositoryProvider);
+      final start = DateTime(month.year, month.month);
+      final end = DateTime(month.year, month.month + 1);
+      return repo.getByDateRange(start, end);
+    });
 
-/// Calendar view with daily spending heatmap and
-/// transaction details on tap.
-class CalendarScreen extends StatefulWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
-  DateTime _focusedDay = DateTime(2026, 3, 13);
-  DateTime _selectedDay = DateTime(2026, 3, 13);
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final monthKey = DateTime(_focusedDay.year, _focusedDay.month);
+    final txnAsync = ref.watch(_monthTransactionsProvider(monthKey));
+
+    // Build daily spending map from transactions
+    final dailySpending = <DateTime, double>{};
+    final dayTransactions = <Transaction>[];
+
+    txnAsync.whenData((txns) {
+      for (final txn in txns) {
+        final key = DateTime(
+          txn.dateTime.year,
+          txn.dateTime.month,
+          txn.dateTime.day,
+        );
+        final amount = txn.type == TransactionType.income
+            ? -txn.amount
+            : txn.amount;
+        dailySpending[key] = (dailySpending[key] ?? 0) + amount;
+      }
+
+      // Filter transactions for selected day
+      final selectedKey = DateTime(
+        _selectedDay.year,
+        _selectedDay.month,
+        _selectedDay.day,
+      );
+      dayTransactions.addAll(
+        txns.where(
+          (t) =>
+              t.dateTime.year == selectedKey.year &&
+              t.dateTime.month == selectedKey.month &&
+              t.dateTime.day == selectedKey.day,
+        ),
+      );
+    });
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -43,12 +79,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               _focusedDay = focused;
             });
           },
+          onPageChanged: (focusedDay) {
+            setState(() => _focusedDay = focusedDay);
+          },
           calendarBuilders: CalendarBuilders(
-            defaultBuilder: _dayBuilder,
-            todayBuilder: _dayBuilder,
-            selectedBuilder: (ctx, day, focused) {
-              return _dayCell(day, isSelected: true);
-            },
+            defaultBuilder: (ctx, day, focused) => _dayCell(day, dailySpending),
+            todayBuilder: (ctx, day, focused) => _dayCell(day, dailySpending),
+            selectedBuilder: (ctx, day, focused) =>
+                _dayCell(day, dailySpending, isSelected: true),
           ),
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
@@ -59,25 +97,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
         const Divider(height: 32),
         Text('當日交易', style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
-        _buildDayDetail(),
+        _buildDayDetail(dayTransactions, dailySpending),
       ],
     );
   }
 
-  Widget? _dayBuilder(BuildContext ctx, DateTime day, DateTime focused) {
-    return _dayCell(day);
-  }
-
-  Widget _dayCell(DateTime day, {bool isSelected = false}) {
+  Widget _dayCell(
+    DateTime day,
+    Map<DateTime, double> dailySpending, {
+    bool isSelected = false,
+  }) {
     final key = DateTime(day.year, day.month, day.day);
-    final spending = _mockDailySpending[key];
+    final spending = dailySpending[key];
     final hasData = spending != null;
 
     Color bg;
     if (isSelected) {
       bg = AppColors.primary;
     } else if (hasData && spending > 0) {
-      // Heatmap: higher spending = darker red
       final intensity = (spending / 2000).clamp(0.15, 0.6);
       bg = AppColors.expense.withValues(alpha: intensity);
     } else if (hasData && spending < 0) {
@@ -103,15 +140,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildDayDetail() {
+  Widget _buildDayDetail(
+    List<Transaction> transactions,
+    Map<DateTime, double> dailySpending,
+  ) {
     final key = DateTime(
       _selectedDay.year,
       _selectedDay.month,
       _selectedDay.day,
     );
-    final spending = _mockDailySpending[key];
+    final spending = dailySpending[key];
 
-    if (spending == null) {
+    if (spending == null && transactions.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(
@@ -125,25 +165,40 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
     }
 
-    final isIncome = spending < 0;
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: CircleAvatar(
-        backgroundColor: (isIncome ? AppColors.income : AppColors.expense)
-            .withValues(alpha: 0.15),
-        child: Icon(
-          isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-          color: isIncome ? AppColors.income : AppColors.expense,
-        ),
-      ),
-      title: Text(isIncome ? '收入' : '支出'),
-      trailing: Text(
-        'NT\$ ${spending.abs().toStringAsFixed(0)}',
-        style: TextStyle(
-          color: isIncome ? AppColors.income : AppColors.expense,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return Column(
+      children: [
+        for (final txn in transactions)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: CircleAvatar(
+              backgroundColor:
+                  (txn.type == TransactionType.income
+                          ? AppColors.income
+                          : AppColors.expense)
+                      .withValues(alpha: 0.15),
+              child: Icon(
+                txn.type == TransactionType.income
+                    ? Icons.arrow_downward
+                    : Icons.arrow_upward,
+                color: txn.type == TransactionType.income
+                    ? AppColors.income
+                    : AppColors.expense,
+              ),
+            ),
+            title: Text(
+              txn.note ?? (txn.type == TransactionType.income ? '收入' : '支出'),
+            ),
+            trailing: Text(
+              'NT\$ ${txn.amount.toStringAsFixed(0)}',
+              style: TextStyle(
+                color: txn.type == TransactionType.income
+                    ? AppColors.income
+                    : AppColors.expense,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
