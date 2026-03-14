@@ -393,10 +393,14 @@ AssetTerm defaultAssetTerm(AccountType type) {
 }
 
 /// Seeds the Isar database with [defaultCategories].
-/// Idempotent — skips if categories already exist.
+/// Idempotent — inserts if empty, updates default names
+/// if categories already exist.
 Future<void> seedCategories(Isar isar) async {
   final count = await isar.categorys.count();
-  if (count > 0) return;
+  if (count > 0) {
+    await _updateDefaultNames(isar);
+    return;
+  }
 
   final now = DateTime.now();
 
@@ -447,4 +451,81 @@ Future<void> seedCategories(Isar isar) async {
   await isar.writeTxn(() async {
     await isar.categorys.putAll(childCategories);
   });
+}
+
+/// Updates names, emojis, and colors of existing default
+/// categories to match the current seed data.
+Future<void> _updateDefaultNames(Isar isar) async {
+  final existing = await isar.categorys
+      .filter()
+      .isDefaultEqualTo(true)
+      .findAll();
+  if (existing.isEmpty) return;
+
+  // Build a lookup from (type, sortOrder, isParent) to
+  // the seed data so we can match without relying on name.
+  final seeds = defaultCategories;
+  final parents = seeds.where((s) => s.parentId == null);
+
+  var updated = false;
+  await isar.writeTxn(() async {
+    for (final seed in parents) {
+      final match = existing
+          .where(
+            (c) =>
+                c.type == seed.type &&
+                c.sortOrder == seed.sortOrder &&
+                c.parentId == null,
+          )
+          .toList();
+      if (match.isEmpty) continue;
+      final cat = match.first;
+      if (cat.name != seed.name || cat.iconEmoji != seed.iconEmoji) {
+        cat
+          ..name = seed.name
+          ..iconEmoji = seed.iconEmoji
+          ..colorHex = seed.colorHex;
+        await isar.categorys.put(cat);
+        updated = true;
+      }
+    }
+
+    // Update children too
+    for (final seed in seeds.where((s) => s.parentId != null)) {
+      // Find the parent's real ID
+      final parentSeed = parents.firstWhere((p) => p.tempId == seed.parentId);
+      final parentMatch = existing
+          .where(
+            (c) =>
+                c.type == parentSeed.type &&
+                c.sortOrder == parentSeed.sortOrder &&
+                c.parentId == null,
+          )
+          .toList();
+      if (parentMatch.isEmpty) continue;
+      final parentId = parentMatch.first.id;
+
+      final childMatch = existing
+          .where((c) => c.parentId == parentId && c.sortOrder == seed.sortOrder)
+          .toList();
+      if (childMatch.isEmpty) continue;
+      final cat = childMatch.first;
+      if (cat.name != seed.name || cat.iconEmoji != seed.iconEmoji) {
+        cat
+          ..name = seed.name
+          ..iconEmoji = seed.iconEmoji
+          ..colorHex = seed.colorHex;
+        await isar.categorys.put(cat);
+        updated = true;
+      }
+    }
+  });
+
+  if (updated) {
+    // ignore: avoid_print
+    print(
+      'Updated default category names to '
+      'Traditional Chinese',
+    );
+  }
 }
