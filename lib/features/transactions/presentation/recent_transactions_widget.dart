@@ -8,11 +8,20 @@ import 'package:hamster_stash/features/transactions/presentation/transaction_pro
 
 /// Recent transactions section for the overview page.
 /// Reads from [recentTransactionsProvider].
-class RecentTransactionsWidget extends ConsumerWidget {
+class RecentTransactionsWidget extends ConsumerStatefulWidget {
   const RecentTransactionsWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RecentTransactionsWidget> createState() =>
+      _RecentTransactionsWidgetState();
+}
+
+class _RecentTransactionsWidgetState
+    extends ConsumerState<RecentTransactionsWidget> {
+  int _displayCount = 10;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final txnAsync = ref.watch(recentTransactionsProvider);
 
@@ -28,9 +37,17 @@ class RecentTransactionsWidget extends ConsumerWidget {
             if (txns.isEmpty) {
               return const EmptyState(type: EmptyStateType.transactions);
             }
+            final visible = txns.take(_displayCount).toList();
             return Column(
               children: [
-                for (final txn in txns.take(10)) _TransactionTile(txn: txn),
+                for (final txn in visible) _TransactionTile(txn: txn),
+                if (txns.length > _displayCount)
+                  TextButton(
+                    onPressed: () {
+                      setState(() => _displayCount += 10);
+                    },
+                    child: const Text('載入更多'),
+                  ),
               ],
             );
           },
