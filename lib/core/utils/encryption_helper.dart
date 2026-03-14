@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:math';
-import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Provides AES-256 field-level encryption for sensitive financial data.
@@ -19,8 +20,19 @@ class EncryptionHelper {
   static Uint8List? _key;
 
   /// Initialise the helper — call once at app startup before any DB access.
+  ///
+  /// Falls back to a non-persisted in-memory key when the platform's secure
+  /// storage is unavailable (e.g. macOS without Keychain entitlements).
   static Future<void> init() async {
-    _key = await _getOrCreateKey();
+    try {
+      _key = await _getOrCreateKey();
+    } on PlatformException catch (e) {
+      developer.log(
+        'Secure storage unavailable, using in-memory key: $e',
+        name: 'EncryptionHelper',
+      );
+      _key = _generateKey();
+    }
   }
 
   // ---------------------------------------------------------------------------
