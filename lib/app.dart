@@ -6,6 +6,7 @@ import 'package:hamster_stash/features/asset_overview/presentation/overview_scre
 import 'package:hamster_stash/features/budget/presentation/budget_screen.dart';
 import 'package:hamster_stash/features/calendar/presentation/calendar_screen.dart';
 import 'package:hamster_stash/features/categories/presentation/category_management.dart';
+import 'package:hamster_stash/features/recurring/presentation/recurring_screen.dart';
 import 'package:hamster_stash/features/reports/presentation/reports_screen.dart';
 import 'package:hamster_stash/features/settings/presentation/settings_screen.dart';
 import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
@@ -22,6 +23,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/category-management',
       builder: (context, state) => const CategoryManagement(),
+    ),
+    GoRoute(
+      path: '/recurring-management',
+      builder: (context, state) => const RecurringScreen(),
     ),
     GoRoute(
       path: '/budget-management',
