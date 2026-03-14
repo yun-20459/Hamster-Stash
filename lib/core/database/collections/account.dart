@@ -22,6 +22,9 @@ class Account {
 
   String? note;
 
+  /// Stock symbols held in this account (e.g. ["AAPL", "2330.TW"]).
+  List<String> stockSymbols = const [];
+
   @enumerated
   AssetTerm assetTerm = AssetTerm.current;
 

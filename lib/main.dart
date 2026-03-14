@@ -12,6 +12,8 @@ import 'package:hamster_stash/features/categories/presentation/category_provider
 import 'package:hamster_stash/features/exchange_rate/data/frankfurter_exchange_rate_service.dart';
 import 'package:hamster_stash/features/exchange_rate/data/isar_exchange_rate_repository.dart';
 import 'package:hamster_stash/features/exchange_rate/presentation/exchange_rate_providers.dart';
+import 'package:hamster_stash/features/stock/data/yahoo_stock_service.dart';
+import 'package:hamster_stash/features/stock/presentation/stock_providers.dart';
 import 'package:hamster_stash/features/transactions/data/isar_transaction_repository.dart';
 import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 
@@ -39,6 +41,7 @@ Future<void> main() async {
           FrankfurterExchangeRateService(),
         ),
         budgetRepositoryProvider.overrideWithValue(IsarBudgetRepository(isar)),
+        stockServiceProvider.overrideWithValue(YahooStockService()),
       ],
       child: const HamsterStashApp(),
     ),
