@@ -18,6 +18,7 @@ Category _makeCat({
   CategoryType type = CategoryType.expense,
   String emoji = '\u{1F354}',
   int? parentId,
+  bool isDefault = true,
 }) {
   return Category()
     ..id = id
@@ -27,7 +28,7 @@ Category _makeCat({
     ..colorHex = '#FF6B35'
     ..parentId = parentId
     ..sortOrder = 0
-    ..isDefault = true
+    ..isDefault = isDefault
     ..createdAt = DateTime(2026);
 }
 
@@ -103,6 +104,30 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('新增分類'), findsOneWidget);
+    });
+
+    testWidgets('given non-default category tapped, '
+        'when edit chosen, '
+        'then shows edit dialog with name and emoji fields', (tester) async {
+      final editCat = _makeCat(id: 10, name: 'Custom', isDefault: false);
+      when(
+        () => mockRepo.getParentsByType(CategoryType.expense),
+      ).thenAnswer((_) async => [editCat]);
+      when(
+        () => mockRepo.getParentsByType(CategoryType.income),
+      ).thenAnswer((_) async => []);
+      when(() => mockRepo.update(any())).thenAnswer((_) async {});
+
+      await tester.pumpWidget(buildWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the category tile to open edit
+      await tester.tap(find.text('Custom'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('編輯分類'), findsOneWidget);
+      expect(find.text('分類名稱'), findsOneWidget);
+      expect(find.text('圖示 Emoji'), findsOneWidget);
     });
   });
 }
