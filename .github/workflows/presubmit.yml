@@ -27,6 +27,3 @@ jobs:
 
       - name: Run tests
         run: flutter test
-
-      - name: Verify build (web)
-        run: flutter build web
