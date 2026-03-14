@@ -30,3 +30,21 @@ final childrenProvider = FutureProvider.family<List<Category>, int>((
   final repo = ref.watch(categoryRepositoryProvider);
   return repo.getChildrenOf(parentId);
 });
+
+/// Looks up a category and its parent by ID.
+/// Returns (child, parent) or (category, null).
+final categoryWithParentProvider =
+    FutureProvider.family<(Category?, Category?), int?>((
+      ref,
+      categoryId,
+    ) async {
+      if (categoryId == null) return (null, null);
+      final repo = ref.watch(categoryRepositoryProvider);
+      final cat = await repo.getById(categoryId);
+      if (cat == null) return (null, null);
+      if (cat.parentId != null) {
+        final parent = await repo.getById(cat.parentId!);
+        return (cat, parent);
+      }
+      return (cat, null);
+    });

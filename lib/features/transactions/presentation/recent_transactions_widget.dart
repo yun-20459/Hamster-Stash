@@ -4,6 +4,7 @@ import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
 import 'package:hamster_stash/core/widgets/empty_state.dart';
+import 'package:hamster_stash/features/categories/presentation/category_providers.dart';
 import 'package:hamster_stash/features/transactions/presentation/transaction_providers.dart';
 
 /// Recent transactions section for the overview page.
@@ -57,13 +58,13 @@ class _RecentTransactionsWidgetState
   }
 }
 
-class _TransactionTile extends StatelessWidget {
+class _TransactionTile extends ConsumerWidget {
   const _TransactionTile({required this.txn});
 
   final Transaction txn;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isExpense = txn.type == TransactionType.expense;
     final isTransfer = txn.type == TransactionType.transfer;
@@ -76,22 +77,40 @@ class _TransactionTile extends StatelessWidget {
         '${txn.dateTime.month.toString().padLeft(2, '0')}/'
         '${txn.dateTime.day.toString().padLeft(2, '0')}';
 
+    // Build category label: "parent > child" or fallback
+    var catLabel = isTransfer ? '轉帳' : (txn.note ?? (isExpense ? '支出' : '收入'));
+    String? catEmoji;
+    if (!isTransfer) {
+      ref.watch(categoryWithParentProvider(txn.categoryId)).whenData((pair) {
+        final (child, parent) = pair;
+        if (parent != null && child != null) {
+          catLabel = '${parent.name} > ${child.name}';
+          catEmoji = child.iconEmoji;
+        } else if (child != null) {
+          catLabel = child.name;
+          catEmoji = child.iconEmoji;
+        }
+      });
+    }
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
         backgroundColor: color.withValues(alpha: 0.15),
-        child: Icon(
-          isTransfer
-              ? Icons.swap_horiz
-              : (isExpense ? Icons.arrow_upward : Icons.arrow_downward),
-          color: color,
-        ),
+        child: catEmoji != null
+            ? Text(catEmoji!, style: const TextStyle(fontSize: 18))
+            : Icon(
+                isTransfer
+                    ? Icons.swap_horiz
+                    : (isExpense ? Icons.arrow_upward : Icons.arrow_downward),
+                color: color,
+              ),
       ),
-      title: Text(
-        txn.note ?? (isTransfer ? '轉帳' : '交易'),
-        style: theme.textTheme.bodyMedium,
+      title: Text(catLabel, style: theme.textTheme.bodyMedium),
+      subtitle: Text(
+        txn.note != null ? '$dateStr  ${txn.note}' : dateStr,
+        style: theme.textTheme.bodySmall,
       ),
-      subtitle: Text(dateStr, style: theme.textTheme.bodySmall),
       trailing: Text(
         isTransfer
             ? 'NT\$ ${_fmt(txn.amount)}'

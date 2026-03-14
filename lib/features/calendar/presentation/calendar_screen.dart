@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hamster_stash/core/database/collections/category.dart';
 import 'package:hamster_stash/core/database/collections/transaction.dart';
 import 'package:hamster_stash/core/database/enums.dart';
 import 'package:hamster_stash/core/theme/app_colors.dart';
@@ -15,24 +14,6 @@ final _monthTransactionsProvider =
       final start = DateTime(month.year, month.month);
       final end = DateTime(month.year, month.month + 1);
       return repo.getByDateRange(start, end);
-    });
-
-/// Looks up a category and its parent by ID.
-/// Returns (child, parent) or (category, null).
-final _categoryWithParentProvider =
-    FutureProvider.family<(Category?, Category?), int?>((
-      ref,
-      categoryId,
-    ) async {
-      if (categoryId == null) return (null, null);
-      final repo = ref.watch(categoryRepositoryProvider);
-      final cat = await repo.getById(categoryId);
-      if (cat == null) return (null, null);
-      if (cat.parentId != null) {
-        final parent = await repo.getById(cat.parentId!);
-        return (cat, parent);
-      }
-      return (cat, null);
     });
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -202,7 +183,7 @@ class _CalendarTxnTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final catAsync = ref.watch(_categoryWithParentProvider(txn.categoryId));
+    final catAsync = ref.watch(categoryWithParentProvider(txn.categoryId));
     final isIncome = txn.type == TransactionType.income;
     final color = isIncome ? AppColors.income : AppColors.expense;
 
