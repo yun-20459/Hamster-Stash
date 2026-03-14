@@ -1,6 +1,7 @@
 import 'package:hamster_stash/core/database/collections/account.dart';
 import 'package:hamster_stash/core/database/collections/budget.dart';
 import 'package:hamster_stash/core/database/collections/category.dart';
+import 'package:hamster_stash/core/database/collections/exchange_rate.dart';
 import 'package:hamster_stash/core/database/collections/manual_valuation.dart';
 import 'package:hamster_stash/core/database/collections/receivable_payable.dart';
 import 'package:hamster_stash/core/database/collections/recurring_rule.dart';
@@ -35,6 +36,7 @@ class DatabaseHelper {
         RecurringRuleSchema,
         ReceivablePayableSchema,
         ManualValuationSchema,
+        ExchangeRateSchema,
       ],
       directory: dir.path,
       name: 'hamster_stash',

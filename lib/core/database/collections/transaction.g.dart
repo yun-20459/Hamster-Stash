@@ -38,36 +38,51 @@ const TransactionSchema = CollectionSchema(
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
-    r'dateTime': PropertySchema(
+    r'currency': PropertySchema(
       id: 5,
+      name: r'currency',
+      type: IsarType.string,
+    ),
+    r'dateTime': PropertySchema(
+      id: 6,
       name: r'dateTime',
       type: IsarType.dateTime,
     ),
+    r'exchangeRate': PropertySchema(
+      id: 7,
+      name: r'exchangeRate',
+      type: IsarType.double,
+    ),
+    r'isManualRate': PropertySchema(
+      id: 8,
+      name: r'isManualRate',
+      type: IsarType.bool,
+    ),
     r'isRecurring': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'isRecurring',
       type: IsarType.bool,
     ),
-    r'note': PropertySchema(id: 7, name: r'note', type: IsarType.string),
+    r'note': PropertySchema(id: 10, name: r'note', type: IsarType.string),
     r'recurringRuleId': PropertySchema(
-      id: 8,
+      id: 11,
       name: r'recurringRuleId',
       type: IsarType.long,
     ),
-    r'tags': PropertySchema(id: 9, name: r'tags', type: IsarType.stringList),
+    r'tags': PropertySchema(id: 12, name: r'tags', type: IsarType.stringList),
     r'toAccountId': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'toAccountId',
       type: IsarType.long,
     ),
     r'type': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'type',
       type: IsarType.byte,
       enumMap: _TransactiontypeEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -139,6 +154,12 @@ int _transactionEstimateSize(
     }
   }
   {
+    final value = object.currency;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.note;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -170,14 +191,17 @@ void _transactionSerialize(
   writer.writeString(offsets[2], object.attachmentPath);
   writer.writeLong(offsets[3], object.categoryId);
   writer.writeDateTime(offsets[4], object.createdAt);
-  writer.writeDateTime(offsets[5], object.dateTime);
-  writer.writeBool(offsets[6], object.isRecurring);
-  writer.writeString(offsets[7], object.note);
-  writer.writeLong(offsets[8], object.recurringRuleId);
-  writer.writeStringList(offsets[9], object.tags);
-  writer.writeLong(offsets[10], object.toAccountId);
-  writer.writeByte(offsets[11], object.type.index);
-  writer.writeDateTime(offsets[12], object.updatedAt);
+  writer.writeString(offsets[5], object.currency);
+  writer.writeDateTime(offsets[6], object.dateTime);
+  writer.writeDouble(offsets[7], object.exchangeRate);
+  writer.writeBool(offsets[8], object.isManualRate);
+  writer.writeBool(offsets[9], object.isRecurring);
+  writer.writeString(offsets[10], object.note);
+  writer.writeLong(offsets[11], object.recurringRuleId);
+  writer.writeStringList(offsets[12], object.tags);
+  writer.writeLong(offsets[13], object.toAccountId);
+  writer.writeByte(offsets[14], object.type.index);
+  writer.writeDateTime(offsets[15], object.updatedAt);
 }
 
 Transaction _transactionDeserialize(
@@ -192,17 +216,20 @@ Transaction _transactionDeserialize(
   object.attachmentPath = reader.readStringOrNull(offsets[2]);
   object.categoryId = reader.readLongOrNull(offsets[3]);
   object.createdAt = reader.readDateTime(offsets[4]);
-  object.dateTime = reader.readDateTime(offsets[5]);
+  object.currency = reader.readStringOrNull(offsets[5]);
+  object.dateTime = reader.readDateTime(offsets[6]);
+  object.exchangeRate = reader.readDouble(offsets[7]);
   object.id = id;
-  object.isRecurring = reader.readBool(offsets[6]);
-  object.note = reader.readStringOrNull(offsets[7]);
-  object.recurringRuleId = reader.readLongOrNull(offsets[8]);
-  object.tags = reader.readStringList(offsets[9]);
-  object.toAccountId = reader.readLongOrNull(offsets[10]);
+  object.isManualRate = reader.readBool(offsets[8]);
+  object.isRecurring = reader.readBool(offsets[9]);
+  object.note = reader.readStringOrNull(offsets[10]);
+  object.recurringRuleId = reader.readLongOrNull(offsets[11]);
+  object.tags = reader.readStringList(offsets[12]);
+  object.toAccountId = reader.readLongOrNull(offsets[13]);
   object.type =
-      _TransactiontypeValueEnumMap[reader.readByteOrNull(offsets[11])] ??
+      _TransactiontypeValueEnumMap[reader.readByteOrNull(offsets[14])] ??
       TransactionType.expense;
-  object.updatedAt = reader.readDateTimeOrNull(offsets[12]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[15]);
   return object;
 }
 
@@ -224,22 +251,28 @@ P _transactionDeserializeProp<P>(
     case 4:
       return (reader.readDateTime(offset)) as P;
     case 5:
-      return (reader.readDateTime(offset)) as P;
-    case 6:
-      return (reader.readBool(offset)) as P;
-    case 7:
       return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readDateTime(offset)) as P;
+    case 7:
+      return (reader.readDouble(offset)) as P;
     case 8:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 11:
+      return (reader.readLongOrNull(offset)) as P;
+    case 12:
+      return (reader.readStringList(offset)) as P;
+    case 13:
+      return (reader.readLongOrNull(offset)) as P;
+    case 14:
       return (_TransactiontypeValueEnumMap[reader.readByteOrNull(offset)] ??
               TransactionType.expense)
           as P;
-    case 12:
+    case 15:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1162,6 +1195,168 @@ extension TransactionQueryFilter
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'currency'),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'currency'),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> currencyEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> currencyBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'currency',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'currency',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> currencyMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'currency',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'currency', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  currencyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'currency', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateTimeEqualTo(
     DateTime value,
   ) {
@@ -1212,6 +1407,77 @@ extension TransactionQueryFilter
           includeLower: includeLower,
           upper: upper,
           includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  exchangeRateEqualTo(double value, {double epsilon = Query.epsilon}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'exchangeRate',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  exchangeRateGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'exchangeRate',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  exchangeRateLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'exchangeRate',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  exchangeRateBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'exchangeRate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
         ),
       );
     });
@@ -1272,6 +1538,15 @@ extension TransactionQueryFilter
           upper: upper,
           includeUpper: includeUpper,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+  isManualRateEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isManualRate', value: value),
       );
     });
   }
@@ -2007,6 +2282,18 @@ extension TransactionQuerySortBy
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByCurrency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByCurrencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currency', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.asc);
@@ -2016,6 +2303,32 @@ extension TransactionQuerySortBy
   QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByDateTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByExchangeRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exchangeRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy>
+  sortByExchangeRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exchangeRate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByIsManualRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManualRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy>
+  sortByIsManualRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManualRate', Sort.desc);
     });
   }
 
@@ -2156,6 +2469,18 @@ extension TransactionQuerySortThenBy
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByCurrency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByCurrencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currency', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.asc);
@@ -2168,6 +2493,19 @@ extension TransactionQuerySortThenBy
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByExchangeRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exchangeRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy>
+  thenByExchangeRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exchangeRate', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -2177,6 +2515,19 @@ extension TransactionQuerySortThenBy
   QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByIsManualRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManualRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy>
+  thenByIsManualRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManualRate', Sort.desc);
     });
   }
 
@@ -2291,9 +2642,29 @@ extension TransactionQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByCurrency({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'currency', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QDistinct> distinctByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dateTime');
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByExchangeRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'exchangeRate');
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByIsManualRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isManualRate');
     });
   }
 
@@ -2382,9 +2753,27 @@ extension TransactionQueryProperty
     });
   }
 
+  QueryBuilder<Transaction, String?, QQueryOperations> currencyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'currency');
+    });
+  }
+
   QueryBuilder<Transaction, DateTime, QQueryOperations> dateTimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateTime');
+    });
+  }
+
+  QueryBuilder<Transaction, double, QQueryOperations> exchangeRateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'exchangeRate');
+    });
+  }
+
+  QueryBuilder<Transaction, bool, QQueryOperations> isManualRateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isManualRate');
     });
   }
 
