@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:hamster_stash/core/theme/app_theme.dart';
 import 'package:hamster_stash/features/asset_overview/presentation/overview_screen.dart';
+import 'package:hamster_stash/features/reports/presentation/reports_screen.dart';
 import 'package:hamster_stash/features/settings/presentation/settings_screen.dart';
 import 'package:hamster_stash/features/splash/presentation/splash_screen.dart';
 import 'package:hamster_stash/features/transactions/presentation/bookkeeping_screen.dart';
@@ -36,8 +36,7 @@ final _router = GoRouter(
           routes: [
             GoRoute(
               path: '/reports',
-              builder: (context, state) =>
-                  const _PlaceholderScreen(title: '報表', icon: Icons.bar_chart),
+              builder: (context, state) => const ReportsScreen(),
             ),
           ],
         ),
@@ -92,33 +91,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
             BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: '記帳'),
             BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '報表'),
             BottomNavigationBarItem(icon: Icon(Icons.settings), label: '設定'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title, required this.icon});
-
-  final String title;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 64, color: theme.colorScheme.primary),
-            const SizedBox(height: 16),
-            Text(title, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text('Coming soon...', style: theme.textTheme.bodySmall),
           ],
         ),
       ),
