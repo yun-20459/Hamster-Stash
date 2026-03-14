@@ -17,38 +17,48 @@ const BudgetSchema = CollectionSchema(
   name: r'Budget',
   id: -3383598594604670326,
   properties: {
-    r'amount': PropertySchema(id: 0, name: r'amount', type: IsarType.double),
+    r'alertThreshold': PropertySchema(
+      id: 0,
+      name: r'alertThreshold',
+      type: IsarType.double,
+    ),
+    r'amount': PropertySchema(id: 1, name: r'amount', type: IsarType.double),
+    r'carryOver': PropertySchema(
+      id: 2,
+      name: r'carryOver',
+      type: IsarType.bool,
+    ),
     r'categoryId': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'categoryId',
       type: IsarType.long,
     ),
     r'createdAt': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'endDate': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'endDate',
       type: IsarType.dateTime,
     ),
-    r'isActive': PropertySchema(id: 4, name: r'isActive', type: IsarType.bool),
-    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
+    r'isActive': PropertySchema(id: 6, name: r'isActive', type: IsarType.bool),
+    r'name': PropertySchema(id: 7, name: r'name', type: IsarType.string),
     r'period': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'period',
       type: IsarType.byte,
       enumMap: _BudgetperiodEnumValueMap,
     ),
-    r'spent': PropertySchema(id: 7, name: r'spent', type: IsarType.double),
+    r'spent': PropertySchema(id: 9, name: r'spent', type: IsarType.double),
     r'startDate': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'startDate',
       type: IsarType.dateTime,
     ),
     r'updatedAt': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -83,16 +93,18 @@ void _budgetSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDouble(offsets[0], object.amount);
-  writer.writeLong(offsets[1], object.categoryId);
-  writer.writeDateTime(offsets[2], object.createdAt);
-  writer.writeDateTime(offsets[3], object.endDate);
-  writer.writeBool(offsets[4], object.isActive);
-  writer.writeString(offsets[5], object.name);
-  writer.writeByte(offsets[6], object.period.index);
-  writer.writeDouble(offsets[7], object.spent);
-  writer.writeDateTime(offsets[8], object.startDate);
-  writer.writeDateTime(offsets[9], object.updatedAt);
+  writer.writeDouble(offsets[0], object.alertThreshold);
+  writer.writeDouble(offsets[1], object.amount);
+  writer.writeBool(offsets[2], object.carryOver);
+  writer.writeLong(offsets[3], object.categoryId);
+  writer.writeDateTime(offsets[4], object.createdAt);
+  writer.writeDateTime(offsets[5], object.endDate);
+  writer.writeBool(offsets[6], object.isActive);
+  writer.writeString(offsets[7], object.name);
+  writer.writeByte(offsets[8], object.period.index);
+  writer.writeDouble(offsets[9], object.spent);
+  writer.writeDateTime(offsets[10], object.startDate);
+  writer.writeDateTime(offsets[11], object.updatedAt);
 }
 
 Budget _budgetDeserialize(
@@ -102,19 +114,21 @@ Budget _budgetDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Budget();
-  object.amount = reader.readDouble(offsets[0]);
-  object.categoryId = reader.readLongOrNull(offsets[1]);
-  object.createdAt = reader.readDateTime(offsets[2]);
-  object.endDate = reader.readDateTimeOrNull(offsets[3]);
+  object.alertThreshold = reader.readDouble(offsets[0]);
+  object.amount = reader.readDouble(offsets[1]);
+  object.carryOver = reader.readBool(offsets[2]);
+  object.categoryId = reader.readLongOrNull(offsets[3]);
+  object.createdAt = reader.readDateTime(offsets[4]);
+  object.endDate = reader.readDateTimeOrNull(offsets[5]);
   object.id = id;
-  object.isActive = reader.readBool(offsets[4]);
-  object.name = reader.readString(offsets[5]);
+  object.isActive = reader.readBool(offsets[6]);
+  object.name = reader.readString(offsets[7]);
   object.period =
-      _BudgetperiodValueEnumMap[reader.readByteOrNull(offsets[6])] ??
+      _BudgetperiodValueEnumMap[reader.readByteOrNull(offsets[8])] ??
       BudgetPeriod.weekly;
-  object.spent = reader.readDouble(offsets[7]);
-  object.startDate = reader.readDateTime(offsets[8]);
-  object.updatedAt = reader.readDateTimeOrNull(offsets[9]);
+  object.spent = reader.readDouble(offsets[9]);
+  object.startDate = reader.readDateTime(offsets[10]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[11]);
   return object;
 }
 
@@ -128,24 +142,28 @@ P _budgetDeserializeProp<P>(
     case 0:
       return (reader.readDouble(offset)) as P;
     case 1:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 2:
-      return (reader.readDateTime(offset)) as P;
-    case 3:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 4:
       return (reader.readBool(offset)) as P;
+    case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readDateTime(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
+      return (reader.readBool(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
       return (_BudgetperiodValueEnumMap[reader.readByteOrNull(offset)] ??
               BudgetPeriod.weekly)
           as P;
-    case 7:
-      return (reader.readDouble(offset)) as P;
-    case 8:
-      return (reader.readDateTime(offset)) as P;
     case 9:
+      return (reader.readDouble(offset)) as P;
+    case 10:
+      return (reader.readDateTime(offset)) as P;
+    case 11:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -250,6 +268,76 @@ extension BudgetQueryWhere on QueryBuilder<Budget, Budget, QWhereClause> {
 }
 
 extension BudgetQueryFilter on QueryBuilder<Budget, Budget, QFilterCondition> {
+  QueryBuilder<Budget, Budget, QAfterFilterCondition> alertThresholdEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'alertThreshold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterFilterCondition> alertThresholdGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'alertThreshold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterFilterCondition> alertThresholdLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'alertThreshold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterFilterCondition> alertThresholdBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'alertThreshold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Budget, Budget, QAfterFilterCondition> amountEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -316,6 +404,16 @@ extension BudgetQueryFilter on QueryBuilder<Budget, Budget, QFilterCondition> {
           includeUpper: includeUpper,
           epsilon: epsilon,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterFilterCondition> carryOverEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'carryOver', value: value),
       );
     });
   }
@@ -1011,6 +1109,18 @@ extension BudgetQueryObject on QueryBuilder<Budget, Budget, QFilterCondition> {}
 extension BudgetQueryLinks on QueryBuilder<Budget, Budget, QFilterCondition> {}
 
 extension BudgetQuerySortBy on QueryBuilder<Budget, Budget, QSortBy> {
+  QueryBuilder<Budget, Budget, QAfterSortBy> sortByAlertThreshold() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alertThreshold', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> sortByAlertThresholdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alertThreshold', Sort.desc);
+    });
+  }
+
   QueryBuilder<Budget, Budget, QAfterSortBy> sortByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.asc);
@@ -1020,6 +1130,18 @@ extension BudgetQuerySortBy on QueryBuilder<Budget, Budget, QSortBy> {
   QueryBuilder<Budget, Budget, QAfterSortBy> sortByAmountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> sortByCarryOver() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'carryOver', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> sortByCarryOverDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'carryOver', Sort.desc);
     });
   }
 
@@ -1133,6 +1255,18 @@ extension BudgetQuerySortBy on QueryBuilder<Budget, Budget, QSortBy> {
 }
 
 extension BudgetQuerySortThenBy on QueryBuilder<Budget, Budget, QSortThenBy> {
+  QueryBuilder<Budget, Budget, QAfterSortBy> thenByAlertThreshold() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alertThreshold', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> thenByAlertThresholdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alertThreshold', Sort.desc);
+    });
+  }
+
   QueryBuilder<Budget, Budget, QAfterSortBy> thenByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.asc);
@@ -1142,6 +1276,18 @@ extension BudgetQuerySortThenBy on QueryBuilder<Budget, Budget, QSortThenBy> {
   QueryBuilder<Budget, Budget, QAfterSortBy> thenByAmountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> thenByCarryOver() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'carryOver', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QAfterSortBy> thenByCarryOverDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'carryOver', Sort.desc);
     });
   }
 
@@ -1267,9 +1413,21 @@ extension BudgetQuerySortThenBy on QueryBuilder<Budget, Budget, QSortThenBy> {
 }
 
 extension BudgetQueryWhereDistinct on QueryBuilder<Budget, Budget, QDistinct> {
+  QueryBuilder<Budget, Budget, QDistinct> distinctByAlertThreshold() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'alertThreshold');
+    });
+  }
+
   QueryBuilder<Budget, Budget, QDistinct> distinctByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'amount');
+    });
+  }
+
+  QueryBuilder<Budget, Budget, QDistinct> distinctByCarryOver() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'carryOver');
     });
   }
 
@@ -1337,9 +1495,21 @@ extension BudgetQueryProperty on QueryBuilder<Budget, Budget, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Budget, double, QQueryOperations> alertThresholdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'alertThreshold');
+    });
+  }
+
   QueryBuilder<Budget, double, QQueryOperations> amountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'amount');
+    });
+  }
+
+  QueryBuilder<Budget, bool, QQueryOperations> carryOverProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'carryOver');
     });
   }
 

@@ -69,7 +69,7 @@ void main() {
 
       await tester.scrollUntilVisible(
         find.text("Hamster's Stash v1.0.0"),
-        200,
+        300,
         scrollable: listView,
       );
       await tester.tap(find.text("Hamster's Stash v1.0.0"));
