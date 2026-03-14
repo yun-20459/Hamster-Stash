@@ -34,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.repeat,
             title: '週期性交易',
             subtitle: '管理自動記帳規則',
-            onTap: () {},
+            onTap: () => context.push('/recurring-management'),
           ),
           const Divider(),
 
